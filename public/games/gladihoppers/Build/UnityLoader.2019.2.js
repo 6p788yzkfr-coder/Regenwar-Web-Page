@@ -2,9 +2,9 @@
 (function(){
   window.config = window.config || {
     cachedDecompressedFileSizes: {
-      Gladihoppers.data.unityweb: 25165824,
-      Gladihoppers.wasm.code.unityweb: 23068672,
-      Gladihoppers.wasm.framework.unityweb: 510976
+      "Gladihoppers.data.unityweb": 25165824,
+      "Gladihoppers.wasm.code.unityweb": 23068672,
+      "Gladihoppers.wasm.framework.unityweb": 510976
     }
   };
   window._cachedAdPositions = window._cachedAdPositions || {};

@@ -22,9 +22,9 @@
       }
     ],
     "src": "./games/cinejoy.html",
-    "iframe": "<iframe src=\"./games/cinejoy.html\" title=\"Cinejoy Movies & TV\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allow=\"fullscreen; autoplay\" allowfullscreen></iframe>",
+    "iframe": "<iframe src=\"./games/cinejoy.html\" title=\"Cinejoy Movies & TV\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allow=\"fullscreen; autoplay\"></iframe>",
     "accentColor": "#95FF50",
-    "thumbnailEmoji": "🍿"
+    "thumbnailEmoji": "\ud83c\udf7f"
   },
   {
     "id": "eaglercraft",
@@ -41,7 +41,7 @@
       },
       {
         "key": "Mouse Look",
-        "action": "Look around 360°"
+        "action": "Look around 360\u00b0"
       },
       {
         "key": "Left Click",
@@ -61,9 +61,9 @@
       }
     ],
     "src": "./games/eaglercraft.html",
-    "iframe": "<iframe src=\"./games/eaglercraft.html\" title=\"Eaglercraft 1.8.8\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allow=\"fullscreen; autoplay; gamepad; pointer-lock\" allowfullscreen></iframe>",
+    "iframe": "<iframe src=\"./games/eaglercraft.html\" title=\"Eaglercraft 1.8.8\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allow=\"fullscreen; autoplay; gamepad; pointer-lock\"></iframe>",
     "accentColor": "#10b981",
-    "thumbnailEmoji": "⛏️"
+    "thumbnailEmoji": "\u26cf\ufe0f"
   },
   {
     "id": "gladihoppers",
@@ -92,9 +92,9 @@
       }
     ],
     "src": "./games/gladihoppers/index.html",
-    "iframe": "<iframe src=\"./games/gladihoppers/index.html\" title=\"Gladihoppers\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allow=\"fullscreen; autoplay; gamepad\" allowfullscreen></iframe>",
+    "iframe": "<iframe src=\"./games/gladihoppers/index.html\" title=\"Gladihoppers\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allow=\"fullscreen; autoplay; gamepad\"></iframe>",
     "accentColor": "#ef4444",
-    "thumbnailEmoji": "⚔️"
+    "thumbnailEmoji": "\u2694\ufe0f"
   },
   {
     "id": "getaway-shootout",
@@ -123,9 +123,9 @@
       }
     ],
     "src": "./games/getaway-shootout/index.html",
-    "iframe": "<iframe src=\"./games/getaway-shootout/index.html\" title=\"Getaway Shootout\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allow=\"fullscreen; autoplay; gamepad\" allowfullscreen></iframe>",
+    "iframe": "<iframe src=\"./games/getaway-shootout/index.html\" title=\"Getaway Shootout\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allow=\"fullscreen; autoplay; gamepad\"></iframe>",
     "accentColor": "#f59e0b",
-    "thumbnailEmoji": "🚁"
+    "thumbnailEmoji": "\ud83d\ude81"
   },
   {
     "id": "2048",
@@ -148,7 +148,7 @@
     "src": "./games/2048.html",
     "iframe": "<iframe src=\"./games/2048.html\" title=\"2048\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
     "accentColor": "#f59e0b",
-    "thumbnailEmoji": "🔢"
+    "thumbnailEmoji": "\ud83d\udd22"
   },
   {
     "id": "retro-snake",
@@ -171,7 +171,7 @@
     "src": "./games/snake.html",
     "iframe": "<iframe src=\"./games/snake.html\" title=\"Retro Snake\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
     "accentColor": "#10b981",
-    "thumbnailEmoji": "🐍"
+    "thumbnailEmoji": "\ud83d\udc0d"
   },
   {
     "id": "tetris",
@@ -183,15 +183,15 @@
     "description": "Rotate and maneuver falling tetrominoes into horizontal lines to clear rows and score high multipliers.",
     "controls": [
       {
-        "key": "← / →",
+        "key": "\u2190 / \u2192",
         "action": "Move piece left / right"
       },
       {
-        "key": "↑ / W",
+        "key": "\u2191 / W",
         "action": "Rotate piece clockwise"
       },
       {
-        "key": "↓ / S",
+        "key": "\u2193 / S",
         "action": "Soft drop"
       },
       {
@@ -202,7 +202,7 @@
     "src": "./games/tetris.html",
     "iframe": "<iframe src=\"./games/tetris.html\" title=\"Tetris Block Master\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
     "accentColor": "#06b6d4",
-    "thumbnailEmoji": "🧩"
+    "thumbnailEmoji": "\ud83e\udde9"
   },
   {
     "id": "flappy-bird",
@@ -221,7 +221,7 @@
     "src": "./games/flappy-bird.html",
     "iframe": "<iframe src=\"./games/flappy-bird.html\" title=\"Flappy Wing\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
     "accentColor": "#eab308",
-    "thumbnailEmoji": "🐤"
+    "thumbnailEmoji": "\ud83d\udc24"
   },
   {
     "id": "space-invaders",
@@ -233,7 +233,7 @@
     "description": "Defend planet Earth from descending waves of alien invaders using your laser cannon and bunker defenses.",
     "controls": [
       {
-        "key": "← / → (A / D)",
+        "key": "\u2190 / \u2192 (A / D)",
         "action": "Move defense cannon"
       },
       {
@@ -244,7 +244,7 @@
     "src": "./games/space-invaders.html",
     "iframe": "<iframe src=\"./games/space-invaders.html\" title=\"Space Invaders\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
     "accentColor": "#ec4899",
-    "thumbnailEmoji": "👾"
+    "thumbnailEmoji": "\ud83d\udc7e"
   },
   {
     "id": "pong-classic",
@@ -271,7 +271,7 @@
     "src": "./games/pong.html",
     "iframe": "<iframe src=\"./games/pong.html\" title=\"Pong Classic 1972\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
     "accentColor": "#38bdf8",
-    "thumbnailEmoji": "🏓"
+    "thumbnailEmoji": "\ud83c\udfd3"
   },
   {
     "id": "breakout",
@@ -287,14 +287,14 @@
         "action": "Move paddle horizontally"
       },
       {
-        "key": "← / →",
+        "key": "\u2190 / \u2192",
         "action": "Keyboard paddle steering"
       }
     ],
     "src": "./games/breakout.html",
     "iframe": "<iframe src=\"./games/breakout.html\" title=\"Breakout Smash\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
     "accentColor": "#f97316",
-    "thumbnailEmoji": "🧱"
+    "thumbnailEmoji": "\ud83e\uddf1"
   },
   {
     "id": "dino-run",
@@ -306,18 +306,18 @@
     "description": "The beloved offline browser runner. Sprint through the desert, leaping over cacti and ducking under pterodactyls.",
     "controls": [
       {
-        "key": "SPACE / ↑",
+        "key": "SPACE / \u2191",
         "action": "Jump over obstacles"
       },
       {
-        "key": "↓",
+        "key": "\u2193",
         "action": "Duck under flying birds"
       }
     ],
     "src": "./games/dino-run.html",
     "iframe": "<iframe src=\"./games/dino-run.html\" title=\"T-Rex Dino Runner\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
     "accentColor": "#10b981",
-    "thumbnailEmoji": "🦖"
+    "thumbnailEmoji": "\ud83e\udd96"
   },
   {
     "id": "minesweeper",
@@ -340,7 +340,7 @@
     "src": "./games/minesweeper.html",
     "iframe": "<iframe src=\"./games/minesweeper.html\" title=\"Minesweeper Pro\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
     "accentColor": "#ef4444",
-    "thumbnailEmoji": "💣"
+    "thumbnailEmoji": "\ud83d\udca3"
   },
   {
     "id": "cookie-clicker",
@@ -363,7 +363,7 @@
     "src": "./games/cookie-clicker.html",
     "iframe": "<iframe src=\"./games/cookie-clicker.html\" title=\"Cookie Empire\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
     "accentColor": "#d97706",
-    "thumbnailEmoji": "🍪"
+    "thumbnailEmoji": "\ud83c\udf6a"
   },
   {
     "id": "connect4",
@@ -386,7 +386,7 @@
     "src": "./games/connect4.html",
     "iframe": "<iframe src=\"./games/connect4.html\" title=\"Connect Four Battle\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
     "accentColor": "#2563eb",
-    "thumbnailEmoji": "🔴"
+    "thumbnailEmoji": "\ud83d\udd34"
   },
   {
     "id": "asteroids",
@@ -398,11 +398,11 @@
     "description": "Pilot your triangular spaceship through dangerous deep space, blasting massive tumbling space rocks into pieces.",
     "controls": [
       {
-        "key": "← / →",
+        "key": "\u2190 / \u2192",
         "action": "Rotate ship"
       },
       {
-        "key": "↑ / W",
+        "key": "\u2191 / W",
         "action": "Engage thruster propulsion"
       },
       {
@@ -413,7 +413,7 @@
     "src": "./games/asteroids.html",
     "iframe": "<iframe src=\"./games/asteroids.html\" title=\"Asteroids 1979\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
     "accentColor": "#38bdf8",
-    "thumbnailEmoji": "🚀"
+    "thumbnailEmoji": "\ud83d\ude80"
   },
   {
     "id": "speed-typing",
@@ -436,7 +436,7 @@
     "src": "./games/speed-typing.html",
     "iframe": "<iframe src=\"./games/speed-typing.html\" title=\"Speed Typer\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
     "accentColor": "#a855f7",
-    "thumbnailEmoji": "⌨️"
+    "thumbnailEmoji": "\u2328\ufe0f"
   },
   {
     "id": "tic-tac-toe",
@@ -455,6 +455,6 @@
     "src": "./games/tic-tac-toe.html",
     "iframe": "<iframe src=\"./games/tic-tac-toe.html\" title=\"Tic Tac Toe Master\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
     "accentColor": "#14b8a6",
-    "thumbnailEmoji": "❌"
+    "thumbnailEmoji": "\u274c"
   }
 ]

@@ -20,7 +20,7 @@
         { key: "Cinejoy.pk Button", action: "Open full cinejoy.pk catalog" }
       ],
       src: "./games/cinejoy.html",
-      iframe: '<iframe src="./games/cinejoy.html" title="Cinejoy Movies & TV" class="game-frame" allow="fullscreen; autoplay" allowfullscreen></iframe>',
+      iframe: '<iframe src="./games/cinejoy.html" title="Cinejoy Movies & TV" class="game-frame" allow="fullscreen; autoplay"></iframe>',
       accentColor: "#95FF50",
       thumbnailEmoji: "🍿"
     },
@@ -41,7 +41,7 @@
         { key: "E", action: "Open inventory" }
       ],
       src: "./games/eaglercraft.html",
-      iframe: '<iframe src="./games/eaglercraft.html" title="Eaglercraft 1.8.8" class="game-frame" allow="fullscreen; autoplay; gamepad; pointer-lock" allowfullscreen></iframe>',
+      iframe: '<iframe src="./games/eaglercraft.html" title="Eaglercraft 1.8.8" class="game-frame" allow="fullscreen; autoplay; gamepad; pointer-lock"></iframe>',
       accentColor: "#10b981",
       thumbnailEmoji: "⛏️"
     },
@@ -60,7 +60,7 @@
         { key: "E", action: "Throw javelin" }
       ],
       src: "./games/gladihoppers/index.html",
-      iframe: '<iframe src="./games/gladihoppers/index.html" title="Gladihoppers" class="game-frame" allow="fullscreen; autoplay; gamepad" allowfullscreen></iframe>',
+      iframe: '<iframe src="./games/gladihoppers/index.html" title="Gladihoppers" class="game-frame" allow="fullscreen; autoplay; gamepad"></iframe>',
       accentColor: "#ef4444",
       thumbnailEmoji: "⚔️"
     },
@@ -79,7 +79,7 @@
         { key: "P (P2)", action: "Player 2 Shoot" }
       ],
       src: "./games/getaway-shootout/index.html",
-      iframe: '<iframe src="./games/getaway-shootout/index.html" title="Getaway Shootout" class="game-frame" allow="fullscreen; autoplay; gamepad" allowfullscreen></iframe>',
+      iframe: '<iframe src="./games/getaway-shootout/index.html" title="Getaway Shootout" class="game-frame" allow="fullscreen; autoplay; gamepad"></iframe>',
       accentColor: "#f59e0b",
       thumbnailEmoji: "🚁"
     },
@@ -623,10 +623,14 @@
 
     const iframeBox = document.getElementById('modal-iframe-container');
     if (game.iframe) {
-      iframeBox.innerHTML = game.iframe;
+      let cleanFrame = game.iframe;
+      if (cleanFrame.includes('allow=')) {
+        cleanFrame = cleanFrame.replace(/\s+allowfullscreen(?=[\s>])/gi, '');
+      }
+      iframeBox.innerHTML = cleanFrame;
     } else {
       iframeBox.innerHTML = `
-        <iframe src="${game.src}" title="${game.title}" class="game-frame" allow="fullscreen; autoplay; gamepad; pointer-lock" allowfullscreen></iframe>
+        <iframe src="${game.src}" title="${game.title}" class="game-frame" allow="fullscreen; autoplay; gamepad; pointer-lock"></iframe>
       `;
     }
 
