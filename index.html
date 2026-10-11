@@ -15,10 +15,337 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css">
   </head>
-  <body class="bg-slate-950 text-slate-100 min-h-screen antialiased selection:bg-emerald-500 selection:text-black">
-    <div id="root"></div>
-    <script type="module" src="./src/main.jsx"></script>
+  <body>
+    <!-- Top Bar Navigation (3-Zone Contract) -->
+    <header class="top-header">
+      <div class="header-container">
+        <!-- Zone 1: Brand Wordmark -->
+        <a class="brand-link" data-category="All">
+          <span style="font-size: 22px;">🕹️</span>
+          <span>NovaPlay</span>
+          <span class="brand-badge">Arcade</span>
+        </a>
+
+        <!-- Zone 2: Navigation Links -->
+        <nav class="nav-links">
+          <button class="nav-btn active" data-category="All">All Games</button>
+          <button class="nav-btn" data-category="Arcade">Arcade</button>
+          <button class="nav-btn" data-category="Puzzle">Puzzle</button>
+          <button class="nav-btn" data-category="Action">Action</button>
+          <button class="nav-btn" data-category="Favorites">Favorites (<span id="fav-count">0</span>)</button>
+        </nav>
+
+        <!-- Zone 3: Primary Actions -->
+        <div class="header-actions">
+          <button id="surprise-btn" class="btn-secondary btn-hide-mobile" title="Play random game">
+            <span>✨</span>
+            <span>Surprise Me</span>
+          </button>
+          <button id="add-game-btn" class="btn-secondary btn-hide-mobile" title="Add a custom game iframe">
+            <span>➕</span>
+            <span>Add Game</span>
+          </button>
+          <button id="cloak-btn" class="btn-primary" title="Disguise as Google Drive [Press Esc or `]">
+            <span>🛡️</span>
+            <span>Stealth Cloak</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Hero Spotlight -->
+      <section id="hero-spotlight" class="hero-spotlight">
+        <div class="hero-glow"></div>
+        <div class="hero-layout">
+          <div>
+            <div class="hero-meta">
+              <span class="tag-featured">🔥 Featured Spotlight</span>
+              <span class="separator">·</span>
+              <span id="hero-category">Puzzle</span>
+              <span class="separator">·</span>
+              <span style="color: var(--accent-amber);">★ <span id="hero-rating">4.9</span></span>
+              <span class="separator">·</span>
+              <span id="hero-plays">184K plays</span>
+            </div>
+            <h1 id="hero-title" class="hero-title">2048</h1>
+            <p id="hero-desc" class="hero-desc">
+              Slide matching numbered tiles across the 4x4 grid to merge them up to the legendary 2048 tile.
+            </p>
+            <div id="hero-keys" class="hero-keys"></div>
+            <div class="hero-actions">
+              <button id="hero-play-btn" class="btn-primary" style="padding: 10px 22px; font-size: 15px;">
+                <span>▶ Play Now</span>
+              </button>
+              <button id="hero-surprise-btn" class="btn-secondary" style="padding: 10px 18px; font-size: 15px;">
+                <span>✨ Surprise Pick</span>
+              </button>
+            </div>
+          </div>
+          <div>
+            <div id="hero-card-preview" class="hero-preview-card">
+              <div id="hero-emoji" class="hero-preview-emoji">🔢</div>
+              <div style="font-weight: 700; font-size: 18px; color: #fff;">Featured Session</div>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Click to launch in Iframe</div>
+              <div style="margin-top: 14px; color: var(--accent-emerald); font-weight: 600; font-size: 13px;">Start Session ▶</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Jump Back In / Recents Strip -->
+      <section id="recent-section">
+        <div class="section-title-row">
+          <div class="section-label">
+            <span>⏱️</span>
+            <span>Jump Back In</span>
+          </div>
+          <div class="section-count">Recent sessions</div>
+        </div>
+        <div id="recent-strip" class="recent-strip"></div>
+      </section>
+
+      <!-- Toolbar: Search, Filters, Sort -->
+      <section class="toolbar">
+        <div class="toolbar-top">
+          <!-- Search box -->
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input
+              type="text"
+              id="search-input"
+              class="search-input"
+              placeholder="Search unblocked games... (Press / to focus)"
+              autocomplete="off"
+            />
+            <span class="search-shortcut">/</span>
+          </div>
+
+          <!-- Sort & Download -->
+          <div class="sort-group">
+            <span style="font-size: 13px; color: var(--text-muted);">Sort:</span>
+            <select id="sort-select" class="sort-select">
+              <option value="popular">Most Popular</option>
+              <option value="rating">Highest Rated</option>
+              <option value="az">Title A-Z</option>
+            </select>
+            <button class="btn-secondary export-json-btn" title="Download games.json registry">
+              <span>💾 Download JSON</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Category Tabs -->
+        <div class="category-tabs">
+          <button class="tab-btn active" data-category="All">All Games</button>
+          <button class="tab-btn" data-category="Arcade">Arcade</button>
+          <button class="tab-btn" data-category="Puzzle">Puzzle</button>
+          <button class="tab-btn" data-category="Action">Action</button>
+          <button class="tab-btn" data-category="Retro">Retro</button>
+          <button class="tab-btn" data-category="Casual">Casual</button>
+          <button class="tab-btn" data-category="Strategy">Strategy</button>
+          <button class="tab-btn favorite-tab" data-category="Favorites">❤️ Favorites</button>
+        </div>
+      </section>
+
+      <!-- Games Grid Section -->
+      <section>
+        <div class="section-title-row">
+          <h2 id="section-title" style="font-size: 18px; font-weight: 700; color: #fff;">All Unblocked Games</h2>
+          <span id="games-count" class="section-count">Showing 14 games</span>
+        </div>
+
+        <div id="game-grid" class="game-grid"></div>
+
+        <!-- Empty State -->
+        <div id="empty-state" style="display: none; text-align: center; padding: 60px 20px; background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--border-color); border-radius: 16px;">
+          <div style="font-size: 40px; margin-bottom: 12px;">🕹️</div>
+          <h3 style="font-size: 17px; font-weight: 700; color: #fff; margin-bottom: 6px;">No games found</h3>
+          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">Try adjusting your search terms or filter selection.</p>
+          <button id="clear-search" class="btn-primary">Clear Search</button>
+        </div>
+      </section>
+
+      <!-- Technical Storage Specification Notice -->
+      <section style="margin-top: 50px; padding: 20px; background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-color); border-radius: 14px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px;">
+        <div>
+          <div style="font-size: 14px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px;">
+            <span style="color: var(--accent-emerald);">ℹ️</span>
+            <span>JSON Iframe Registry Specification</span>
+          </div>
+          <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">
+            Every game is stored directly as an <code>&lt;iframe&gt;</code> inside <code>games.json</code>. Fast, offline-capable, and school-firewall friendly.
+          </p>
+        </div>
+        <button class="btn-secondary export-json-btn">
+          <span>💾 Export games.json</span>
+        </button>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div style="max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px;">
+        <div>NovaPlay Unblocked Games · High-Speed HTML5 Arcade Portal</div>
+        <div style="display: flex; gap: 16px;">
+          <span>Press <kbd class="key-tag">`</kbd> or <kbd class="key-tag">Esc</kbd> for Stealth Mode</span>
+          <span>·</span>
+          <span>Stored in JSON</span>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Active Game Player Modal -->
+    <div id="player-modal" class="modal-overlay" style="display: none;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="modal-game-info">
+            <span id="modal-emoji" style="font-size: 26px;">🕹️</span>
+            <div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span id="modal-title" class="modal-title">Game Title</span>
+                <span id="modal-category" class="modal-sub">· Arcade</span>
+              </div>
+              <div class="modal-sub">Active session loaded from JSON iframe</div>
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button id="modal-fav-btn" class="icon-btn" title="Toggle Favorite">🤍</button>
+            <button id="modal-reload-btn" class="icon-btn" title="Reload Game">🔄</button>
+            <button id="modal-fullscreen-btn" class="icon-btn" title="Toggle Fullscreen">⛶</button>
+            <a id="modal-external-link" href="#" target="_blank" class="icon-btn" title="Open standalone window" style="text-decoration: none;">↗</a>
+            <button id="modal-code-toggle" class="icon-btn" title="View Iframe JSON Code">&lt;/&gt;</button>
+            <button id="close-player-btn" class="icon-btn" style="color: var(--accent-rose);" title="Close [Esc]">✕</button>
+          </div>
+        </div>
+
+        <!-- Iframe Code Drawer (optional view) -->
+        <div id="embed-code-drawer" style="display: none; padding: 12px 20px; background: #020617; border-bottom: 1px solid var(--border-color);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 12px; color: var(--text-muted);">
+            <span>Stored in <code>games.json</code>:</span>
+            <button id="copy-embed-btn" class="btn-secondary" style="padding: 4px 10px; font-size: 11px;">Copy Iframe Code</button>
+          </div>
+          <div id="embed-code" class="embed-code-box"></div>
+        </div>
+
+        <!-- Main Iframe Display Container -->
+        <div id="modal-iframe-container" class="modal-iframe-box"></div>
+
+        <!-- Modal Bottom Info -->
+        <div class="modal-body">
+          <div class="modal-grid">
+            <div>
+              <h4 style="font-size: 13px; font-weight: 700; text-transform: uppercase; color: var(--accent-emerald); margin-bottom: 6px;">About this Game</h4>
+              <p id="modal-desc" style="font-size: 14px; color: var(--text-secondary); line-height: 1.6;"></p>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 10px;">
+                <span>Rating: <strong style="color: var(--accent-amber);" id="modal-rating">4.9</strong> / 5.0</span>
+                <span>·</span>
+                <span>Plays: <strong style="color: #fff;" id="modal-plays">184K</strong></span>
+                <span>·</span>
+                <span>ID: <code id="modal-id"></code></span>
+              </div>
+            </div>
+            <div style="background: #020617; padding: 14px; border-radius: 12px; border: 1px solid var(--border-color);">
+              <h4 style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: #fff; margin-bottom: 10px;">Controls Guide</h4>
+              <div id="modal-controls-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Custom Game Modal -->
+    <div id="add-modal" class="modal-overlay" style="display: none;">
+      <div class="modal-content" style="max-width: 520px;">
+        <div class="modal-header">
+          <div style="font-weight: 700; font-size: 16px; color: #fff;">Add Custom Iframe Game</div>
+          <button id="close-add-modal" class="icon-btn">✕</button>
+        </div>
+        <form id="add-game-form" style="padding: 20px;">
+          <div class="form-group">
+            <label class="form-label">Game Title *</label>
+            <input type="text" id="form-title" class="form-input" placeholder="e.g. Slope Runner, Drift Boss" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Category</label>
+              <select id="form-category" class="form-select">
+                <option value="Arcade">Arcade</option>
+                <option value="Puzzle">Puzzle</option>
+                <option value="Action">Action</option>
+                <option value="Retro">Retro</option>
+                <option value="Casual">Casual</option>
+                <option value="Strategy">Strategy</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Emoji Icon</label>
+              <input type="text" id="form-emoji" class="form-input" value="🕹️" maxlength="4" style="text-align: center;">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Iframe Embed Code or URL *</label>
+            <textarea id="form-iframe" class="form-textarea" rows="3" placeholder='&lt;iframe src="https://example.com/game.html" ...&gt;&lt;/iframe&gt; OR direct URL' required></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Description</label>
+            <textarea id="form-desc" class="form-textarea" rows="2" placeholder="Brief summary of gameplay and objective..."></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Primary Key</label>
+              <input type="text" id="form-key" class="form-input" placeholder="e.g. Arrow Keys, WASD">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Action</label>
+              <input type="text" id="form-action" class="form-input" placeholder="e.g. Steer / Jump">
+            </div>
+          </div>
+          <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px;">
+            <button type="button" id="cancel-add-modal" class="btn-secondary">Cancel</button>
+            <button type="submit" class="btn-primary">Save to Registry</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Stealth Cloak Screen (Disguised as Google Drive) -->
+    <div id="cloak-screen" class="cloak-screen" style="display: none;">
+      <div style="height: 60px; border-bottom: 1px solid #e5e7eb; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; gap: 20px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 36px; height: 36px; border-radius: 8px; background: #059669; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px;">Δ</div>
+          <span style="font-size: 20px; color: #374151; font-weight: 500;">Drive</span>
+        </div>
+        <div style="flex: 1; max-width: 600px;">
+          <input type="text" value="AP US History 2026 Semester Thesis Notes.docx" style="width: 100%; background: #f3f4f6; border: none; border-radius: 24px; padding: 10px 20px; font-size: 14px; outline: none;">
+        </div>
+        <div>
+          <button id="exit-cloak-btn" style="background: none; border: 1px solid #d1d5db; padding: 6px 14px; border-radius: 6px; font-size: 12px; cursor: pointer; color: #6b7280;">Exit Disguise [Esc]</button>
+        </div>
+      </div>
+      <div style="flex: 1; padding: 30px; overflow-y: auto; background: #f9fafb;">
+        <h2 style="font-size: 16px; font-weight: 600; color: #374151; margin-bottom: 16px;">Quick Access Documents</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-bottom: 24px;">
+          <div style="background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <div style="font-weight: 600; font-size: 14px; color: #1f2937; margin-bottom: 6px;">📄 Biology_Cellular_Respiration.pdf</div>
+            <div style="font-size: 12px; color: #6b7280;">Modified yesterday · 4.2 MB</div>
+          </div>
+          <div style="background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <div style="font-weight: 600; font-size: 14px; color: #1f2937; margin-bottom: 6px;">📊 Calculus_Unit_Review_Problems.xlsx</div>
+            <div style="font-size: 12px; color: #6b7280;">Modified 3 hours ago · 1.8 MB</div>
+          </div>
+          <div style="background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <div style="font-weight: 600; font-size: 14px; color: #1f2937; margin-bottom: 6px;">📁 World_History_Group_Project_2026</div>
+            <div style="font-size: 12px; color: #6b7280;">Folder · 14 items</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Application Script Entry Point -->
+    <script type="module" src="./app.js"></script>
   </body>
 </html>
-

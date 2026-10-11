@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Asteroids</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+    body {
+      background: #020617;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 12px;
+    }
+    .hud {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 480px;
+      margin-bottom: 8px;
+      font-family: monospace;
+      font-size: 15px;
+      color: #38bdf8;
+    }
+    #game-container {
+      position: relative;
+      border: 2px solid #1e293b;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
+    }
+    canvas { display: block; background: #000; }
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    .btn {
+      background: #38bdf8;
+      color: #032030;
+      font-weight: bold;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .c-btn {
+      background: #1e293b;
+      color: #fff;
+      border: 1px solid #334155;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .tip { margin-top: 8px; font-size: 12px; color: #64748b; }
+  </style>
+</head>
+<body>
+  <div class="hud">
+    <span>SCORE: <b id="score">0</b></span>
+    <span>LIVES: <b id="lives">3</b></span>
+  </div>
+
+  <div id="game-container">
+    <canvas id="canvas" width="480" height="400"></canvas>
+    <div id="overlay" class="overlay" style="display: none;">
+      <h2 id="end-title" style="font-size: 26px; color: #ef4444;">GAME OVER</h2>
+      <button class="btn" id="restart-btn">PLAY AGAIN</button>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="c-btn" id="btn-left">↺</button>
+    <button class="c-btn" id="btn-thrust">▲ Thrust</button>
+    <button class="c-btn" id="btn-fire" style="background:#ef4444; color:#fff">Fire</button>
+    <button class="c-btn" id="btn-right">↻</button>
+  </div>
+
+  <div class="tip">[←] [→] Rotate, [↑] / [W] Thrust, [SPACE] Fire</div>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    let ship = { x: 240, y: 200, r: 12, angle: -Math.PI / 2, rot: 0, thrusting: false, vx: 0, vy: 0 };
+    let bullets = [];
+    let asteroids = [];
+    let score = 0, lives = 3;
+    let isGameOver = false;
+    let keys = {};
+
+    function playTone(freq, dur) {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+        osc.start();
+        osc.stop(audioCtx.currentTime + dur);
+      } catch(e){}
+    }
+
+    function spawnAsteroids(num) {
+      for (let i = 0; i < num; i++) {
+        let x, y, dist;
+        do {
+          x = Math.random() * canvas.width;
+          y = Math.random() * canvas.height;
+          dist = Math.hypot(x - ship.x, y - ship.y);
+        } while (dist < 100);
+
+        asteroids.push({
+          x, y,
+          r: 28,
+          vx: (Math.random() - 0.5) * 2,
+          vy: (Math.random() - 0.5) * 2,
+          level: 3
+        });
+      }
+    }
+
+    function restart() {
+      score = 0;
+      lives = 3;
+      isGameOver = false;
+      ship.x = 240; ship.y = 200;
+      ship.vx = 0; ship.vy = 0;
+      ship.angle = -Math.PI / 2;
+      bullets = [];
+      asteroids = [];
+      document.getElementById('score').textContent = score;
+      document.getElementById('lives').textContent = lives;
+      document.getElementById('overlay').style.display = 'none';
+      spawnAsteroids(4);
+    }
+
+    function shoot() {
+      if (bullets.length < 5 && !isGameOver) {
+        bullets.push({
+          x: ship.x + Math.cos(ship.angle) * ship.r,
+          y: ship.y + Math.sin(ship.angle) * ship.r,
+          vx: Math.cos(ship.angle) * 7 + ship.vx,
+          vy: Math.sin(ship.angle) * 7 + ship.vy,
+          life: 50
+        });
+        playTone(650, 0.04);
+      }
+    }
+
+    function update() {
+      if (isGameOver) return;
+
+      // Controls
+      if (keys['ArrowLeft'] || keys['KeyA']) ship.angle -= 0.08;
+      if (keys['ArrowRight'] || keys['KeyD']) ship.angle += 0.08;
+      if (keys['ArrowUp'] || keys['KeyW']) {
+        ship.vx += Math.cos(ship.angle) * 0.15;
+        ship.vy += Math.sin(ship.angle) * 0.15;
+        ship.thrusting = true;
+      } else {
+        ship.thrusting = false;
+      }
+
+      // Drag
+      ship.vx *= 0.985;
+      ship.vy *= 0.985;
+      ship.x = (ship.x + ship.vx + canvas.width) % canvas.width;
+      ship.y = (ship.y + ship.vy + canvas.height) % canvas.height;
+
+      // Bullets
+      for (let i = bullets.length - 1; i >= 0; i--) {
+        const b = bullets[i];
+        b.x = (b.x + b.vx + canvas.width) % canvas.width;
+        b.y = (b.y + b.vy + canvas.height) % canvas.height;
+        b.life--;
+        if (b.life <= 0) {
+          bullets.splice(i, 1);
+          continue;
+        }
+
+        // Hit asteroid
+        for (let j = asteroids.length - 1; j >= 0; j--) {
+          const a = asteroids[j];
+          if (Math.hypot(b.x - a.x, b.y - a.y) < a.r) {
+            bullets.splice(i, 1);
+            score += (4 - a.level) * 20;
+            document.getElementById('score').textContent = score;
+            playTone(200 + a.level * 60, 0.08);
+
+            // Split
+            if (a.level > 1) {
+              asteroids.push({
+                x: a.x, y: a.y,
+                r: a.r * 0.65,
+                vx: (Math.random() - 0.5) * 3,
+                vy: (Math.random() - 0.5) * 3,
+                level: a.level - 1
+              });
+              asteroids.push({
+                x: a.x, y: a.y,
+                r: a.r * 0.65,
+                vx: (Math.random() - 0.5) * 3,
+                vy: (Math.random() - 0.5) * 3,
+                level: a.level - 1
+              });
+            }
+            asteroids.splice(j, 1);
+            break;
+          }
+        }
+      }
+
+      // Asteroids move & hit ship
+      if (asteroids.length === 0) spawnAsteroids(5);
+
+      for (let a of asteroids) {
+        a.x = (a.x + a.vx + canvas.width) % canvas.width;
+        a.y = (a.y + a.vy + canvas.height) % canvas.height;
+
+        if (Math.hypot(ship.x - a.x, ship.y - a.y) < ship.r + a.r) {
+          lives--;
+          document.getElementById('lives').textContent = lives;
+          playTone(100, 0.3);
+          ship.x = canvas.width / 2;
+          ship.y = canvas.height / 2;
+          ship.vx = 0; ship.vy = 0;
+          if (lives <= 0) {
+            isGameOver = true;
+            document.getElementById('overlay').style.display = 'flex';
+          }
+          break;
+        }
+      }
+    }
+
+    function draw() {
+      ctx.fillStyle = '#020617';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw Ship
+      ctx.save();
+      ctx.translate(ship.x, ship.y);
+      ctx.rotate(ship.angle);
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(ship.r, 0);
+      ctx.lineTo(-ship.r * 0.8, ship.r * 0.7);
+      ctx.lineTo(-ship.r * 0.4, 0);
+      ctx.lineTo(-ship.r * 0.8, -ship.r * 0.7);
+      ctx.closePath();
+      ctx.stroke();
+
+      if (ship.thrusting) {
+        ctx.strokeStyle = '#f97316';
+        ctx.beginPath();
+        ctx.moveTo(-ship.r * 0.5, 0);
+        ctx.lineTo(-ship.r * 1.2, 0);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      // Bullets
+      ctx.fillStyle = '#facc15';
+      bullets.forEach(b => {
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // Asteroids
+      ctx.strokeStyle = '#cbd5e1';
+      ctx.lineWidth = 1.5;
+      asteroids.forEach(a => {
+        ctx.beginPath();
+        ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2);
+        ctx.stroke();
+      });
+    }
+
+    function loop() {
+      update();
+      draw();
+      requestAnimationFrame(loop);
+    }
+
+    window.addEventListener('keydown', e => {
+      keys[e.code] = true;
+      if (e.code === 'Space') { e.preventDefault(); shoot(); }
+    });
+    window.addEventListener('keyup', e => { keys[e.code] = false; });
+
+    document.getElementById('btn-fire').onclick = shoot;
+    document.getElementById('restart-btn').onclick = restart;
+
+    let leftT, rightT, thrustT;
+    document.getElementById('btn-left').onpointerdown = () => { leftT = setInterval(() => ship.angle -= 0.1, 20); };
+    document.getElementById('btn-left').onpointerup = () => clearInterval(leftT);
+    document.getElementById('btn-right').onpointerdown = () => { rightT = setInterval(() => ship.angle += 0.1, 20); };
+    document.getElementById('btn-right').onpointerup = () => clearInterval(rightT);
+    document.getElementById('btn-thrust').onpointerdown = () => {
+      thrustT = setInterval(() => {
+        ship.vx += Math.cos(ship.angle) * 0.2;
+        ship.vy += Math.sin(ship.angle) * 0.2;
+        ship.thrusting = true;
+      }, 20);
+    };
+    document.getElementById('btn-thrust').onpointerup = () => {
+      clearInterval(thrustT);
+      ship.thrusting = false;
+    };
+
+    restart();
+    requestAnimationFrame(loop);
+  </script>
+</body>
+</html>

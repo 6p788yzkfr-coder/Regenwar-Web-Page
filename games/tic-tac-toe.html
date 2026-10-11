@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Tic Tac Toe</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+    body {
+      background: #0f172a;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 12px;
+    }
+    .hud {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      max-width: 340px;
+      margin-bottom: 16px;
+    }
+    .status {
+      font-size: 18px;
+      font-weight: 700;
+      color: #38bdf8;
+    }
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-gap: 10px;
+      background: #1e293b;
+      padding: 12px;
+      border-radius: 12px;
+      border: 2px solid #334155;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .cell {
+      width: 100px;
+      height: 100px;
+      background: #0f172a;
+      border-radius: 8px;
+      border: 1px solid #334155;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 46px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      font-family: monospace;
+    }
+    .cell:hover { background: #1e293b; }
+    .cell.x { color: #38bdf8; }
+    .cell.o { color: #f43f5e; }
+    .cell.win { background: #1e3a5f; border-color: #38bdf8; }
+    .btn-bar {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .btn {
+      background: #334155;
+      color: #fff;
+      border: 1px solid #475569;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .btn:hover { background: #475569; }
+  </style>
+</head>
+<body>
+  <div class="hud">
+    <div id="status" class="status">Your Turn (X)</div>
+    <button class="btn" id="mode-btn">vs AI</button>
+  </div>
+
+  <div id="board" class="board"></div>
+
+  <div class="btn-bar">
+    <button class="btn" id="restart-btn" style="background: #2563eb;">New Game</button>
+  </div>
+
+  <script>
+    let board = Array(9).fill(null);
+    let turn = 'X';
+    let vsAI = true;
+    let gameOver = false;
+    let winLine = [];
+
+    const winPatterns = [
+      [0,1,2],[3,4,5],[6,7,8],
+      [0,3,6],[1,4,7],[2,5,8],
+      [0,4,8],[2,4,6]
+    ];
+
+    function init() {
+      board = Array(9).fill(null);
+      turn = 'X';
+      gameOver = false;
+      winLine = [];
+      document.getElementById('status').textContent = 'Your Turn (X)';
+      document.getElementById('status').style.color = '#38bdf8';
+      render();
+    }
+
+    function render() {
+      const bEl = document.getElementById('board');
+      bEl.innerHTML = '';
+      board.forEach((val, i) => {
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        if (val === 'X') { cell.classList.add('x'); cell.textContent = 'X'; }
+        if (val === 'O') { cell.classList.add('o'); cell.textContent = 'O'; }
+        if (winLine.includes(i)) cell.classList.add('win');
+
+        cell.onclick = () => makeMove(i);
+        bEl.appendChild(cell);
+      });
+    }
+
+    function checkWin(b) {
+      for (let p of winPatterns) {
+        if (b[p[0]] && b[p[0]] === b[p[1]] && b[p[0]] === b[p[2]]) {
+          return { winner: b[p[0]], line: p };
+        }
+      }
+      if (b.every(c => c !== null)) return { winner: 'tie', line: [] };
+      return null;
+    }
+
+    function makeMove(i) {
+      if (gameOver || board[i] !== null) return;
+
+      board[i] = turn;
+      render();
+
+      const res = checkWin(board);
+      if (res) {
+        gameOver = true;
+        winLine = res.line;
+        render();
+        if (res.winner === 'tie') {
+          document.getElementById('status').textContent = "It's a Tie!";
+          document.getElementById('status').style.color = '#cbd5e1';
+        } else {
+          document.getElementById('status').textContent = `${res.winner} Wins!`;
+          document.getElementById('status').style.color = res.winner === 'X' ? '#38bdf8' : '#f43f5e';
+        }
+        return;
+      }
+
+      turn = turn === 'X' ? 'O' : 'X';
+      if (turn === 'O') {
+        document.getElementById('status').textContent = vsAI ? 'AI thinking...' : "O's Turn";
+        document.getElementById('status').style.color = '#f43f5e';
+        if (vsAI) setTimeout(aiMove, 250);
+      } else {
+        document.getElementById('status').textContent = 'Your Turn (X)';
+        document.getElementById('status').style.color = '#38bdf8';
+      }
+    }
+
+    function minimax(b, depth, isMax) {
+      const res = checkWin(b);
+      if (res) {
+        if (res.winner === 'O') return 10 - depth;
+        if (res.winner === 'X') return depth - 10;
+        return 0;
+      }
+
+      if (isMax) {
+        let best = -Infinity;
+        for (let i = 0; i < 9; i++) {
+          if (b[i] === null) {
+            b[i] = 'O';
+            best = Math.max(best, minimax(b, depth + 1, false));
+            b[i] = null;
+          }
+        }
+        return best;
+      } else {
+        let best = Infinity;
+        for (let i = 0; i < 9; i++) {
+          if (b[i] === null) {
+            b[i] = 'X';
+            best = Math.min(best, minimax(b, depth + 1, true));
+            b[i] = null;
+          }
+        }
+        return best;
+      }
+    }
+
+    function aiMove() {
+      if (gameOver || turn !== 'O') return;
+      let bestVal = -Infinity;
+      let bestMove = -1;
+
+      for (let i = 0; i < 9; i++) {
+        if (board[i] === null) {
+          board[i] = 'O';
+          let moveVal = minimax(board, 0, false);
+          board[i] = null;
+          if (moveVal > bestVal) {
+            bestMove = i;
+            bestVal = moveVal;
+          }
+        }
+      }
+
+      if (bestMove !== -1) makeMove(bestMove);
+    }
+
+    document.getElementById('restart-btn').onclick = init;
+    document.getElementById('mode-btn').onclick = () => {
+      vsAI = !vsAI;
+      document.getElementById('mode-btn').textContent = vsAI ? 'vs AI' : 'vs 2P Local';
+      init();
+    };
+
+    init();
+  </script>
+</body>
+</html>
