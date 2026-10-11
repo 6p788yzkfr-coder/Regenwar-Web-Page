@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cinejoy - Stream Free Movies & TV Shows</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --cine-green: #95FF50;
+      --cine-green-glow: rgba(149, 255, 80, 0.35);
+      --cine-dark: #07090e;
+      --cine-darker: #040508;
+      --cine-card: #0e131f;
+      --cine-card-hover: #161e31;
+      --cine-border: #1a2236;
+      --cine-text: #f8fafc;
+      --cine-text-muted: #94a3b8;
+    }
+    body {
+      background: var(--cine-dark);
+      color: var(--cine-text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Cinejoy Navbar */
+    header {
+      background: rgba(4, 5, 8, 0.96);
+      border-bottom: 1px solid var(--cine-border);
+      height: 68px;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(12px);
+    }
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .brand {
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .brand span.accent {
+      color: var(--cine-green);
+      text-shadow: 0 0 16px var(--cine-green-glow);
+    }
+    nav.cine-nav {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .nav-item {
+      background: none;
+      border: none;
+      color: var(--cine-text-muted);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: color 0.15s;
+    }
+    .nav-item:hover, .nav-item.active {
+      color: #fff;
+    }
+    .nav-item.active {
+      color: var(--cine-green);
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .search-box {
+      position: relative;
+      width: 240px;
+    }
+    .search-input {
+      width: 100%;
+      background: var(--cine-card);
+      border: 1px solid var(--cine-border);
+      color: #fff;
+      padding: 8px 14px 8px 34px;
+      border-radius: 20px;
+      font-size: 13px;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .search-input:focus {
+      border-color: var(--cine-green);
+      width: 280px;
+      box-shadow: 0 0 12px var(--cine-green-glow);
+    }
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 12px;
+      color: var(--cine-text-muted);
+    }
+    .btn-cine-official {
+      background: var(--cine-green);
+      color: #021a00;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: all 0.2s;
+      box-shadow: 0 0 15px var(--cine-green-glow);
+    }
+    .btn-cine-official:hover {
+      background: #abff72;
+      transform: scale(1.02);
+    }
+
+    /* Main Content */
+    main {
+      flex: 1;
+      width: 100%;
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 0 20px 40px;
+    }
+
+    /* Hero Billboard Section */
+    .hero-billboard {
+      position: relative;
+      width: 100%;
+      height: 480px;
+      border-radius: 20px;
+      margin: 20px 0 36px;
+      overflow: hidden;
+      display: flex;
+      align-items: flex-end;
+      padding: 44px;
+      border: 1px solid var(--cine-border);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+      background-size: cover;
+      background-position: center 25%;
+      transition: background-image 0.5s ease;
+    }
+    .hero-billboard::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(0deg, #07090e 10%, rgba(7, 9, 14, 0.7) 50%, rgba(7, 9, 14, 0.2) 100%);
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 650px;
+    }
+    .hero-tags {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .tag-green {
+      background: var(--cine-green);
+      color: #000;
+      padding: 2px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+    .tag-outline {
+      border: 1px solid var(--cine-text-muted);
+      color: #fff;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .tag-rating {
+      color: #fbbf24;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .hero-title {
+      font-size: clamp(30px, 4.5vw, 46px);
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.15;
+      margin-bottom: 12px;
+    }
+    .hero-desc {
+      color: #cbd5e1;
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 22px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .hero-buttons {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .btn-watch-now {
+      background: var(--cine-green);
+      color: #021a00;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 0 20px var(--cine-green-glow);
+      transition: all 0.2s;
+    }
+    .btn-watch-now:hover {
+      background: #abff72;
+      transform: translateY(-2px);
+    }
+    .btn-fav {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      transition: all 0.2s;
+    }
+    .btn-fav:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Section Rows */
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 32px 0 16px;
+    }
+    .section-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-title::before {
+      content: '';
+      width: 4px;
+      height: 20px;
+      background: var(--cine-green);
+      border-radius: 2px;
+      box-shadow: 0 0 10px var(--cine-green-glow);
+    }
+
+    /* Media Posters Grid */
+    .media-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 18px;
+    }
+    .media-card {
+      background: var(--cine-card);
+      border: 1px solid var(--cine-border);
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      position: relative;
+    }
+    .media-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--cine-green);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.8);
+    }
+    .media-poster-box {
+      position: relative;
+      width: 100%;
+      height: 250px;
+      overflow: hidden;
+      background: #0f1523;
+    }
+    .media-poster-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+    .media-card:hover .media-poster-box img {
+      transform: scale(1.08);
+    }
+    .media-badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: rgba(0, 0, 0, 0.8);
+      color: var(--cine-green);
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 6px;
+      border-radius: 4px;
+      border: 1px solid var(--cine-green);
+    }
+    .play-hover-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(7, 9, 14, 0.65);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .media-card:hover .play-hover-overlay {
+      opacity: 1;
+    }
+    .play-circle {
+      width: 46px;
+      height: 46px;
+      background: var(--cine-green);
+      color: #000;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 0 20px var(--cine-green-glow);
+    }
+    .media-info {
+      padding: 12px;
+    }
+    .media-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .media-sub {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--cine-text-muted);
+    }
+
+    /* Video Player Modal with Multi-Server Switcher */
+    .cinema-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(4, 5, 8, 0.96);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(12px);
+    }
+    .cinema-box {
+      width: 100%;
+      max-width: 960px;
+      background: #0b0f19;
+      border: 1px solid var(--cine-border);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.9);
+      display: flex;
+      flex-direction: column;
+    }
+    .modal-bar {
+      padding: 14px 20px;
+      background: #04060b;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--cine-border);
+    }
+    .modal-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: #fff;
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--cine-text-muted);
+      font-size: 20px;
+      cursor: pointer;
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+    .modal-close:hover {
+      background: #1e293b;
+      color: #fff;
+    }
+    .viewport {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #000;
+    }
+    .viewport video {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .server-tabs {
+      background: #080c14;
+      border-top: 1px solid var(--cine-border);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .server-buttons {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .server-btn {
+      background: var(--cine-card);
+      border: 1px solid var(--cine-border);
+      color: var(--cine-text-muted);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .server-btn:hover, .server-btn.active {
+      background: rgba(149, 255, 80, 0.15);
+      border-color: var(--cine-green);
+      color: var(--cine-green);
+    }
+    .modal-details {
+      padding: 18px 20px;
+      background: #0b0f19;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .modal-synopsis {
+      font-size: 13px;
+      color: var(--cine-text-muted);
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand-wrap">
+      <div class="brand" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+        <span>🍿</span>
+        <span>Cine<span class="accent">joy</span></span>
+      </div>
+      <nav class="cine-nav">
+        <button class="nav-item active" data-filter="all">Home</button>
+        <button class="nav-item" data-filter="movie">Movies</button>
+        <button class="nav-item" data-filter="tv">TV Shows</button>
+        <button class="nav-item" data-filter="anime">Anime</button>
+        <button class="nav-item" data-filter="top">Top IMDb</button>
+      </nav>
+    </div>
+    <div class="header-right">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="cine-search" class="search-input" placeholder="Search movies, TV shows...">
+      </div>
+      <a href="https://cinejoy.pk/" target="_blank" rel="noopener noreferrer" class="btn-cine-official" title="Open official cinejoy.pk">
+        <span>cinejoy.pk</span>
+        <span>↗</span>
+      </a>
+    </div>
+  </header>
+
+  <main>
+    <!-- Featured Billboard -->
+    <div id="billboard" class="hero-billboard" style="background-image: url('https://images.unsplash.com/photo-1534447677768-be436bb09401?w=1600&auto=format&fit=crop&q=80');">
+      <div class="hero-content">
+        <div class="hero-tags">
+          <span class="tag-green">TRENDING #1</span>
+          <span class="tag-outline">4K ULTRA HD</span>
+          <span class="tag-outline">SCI-FI / ACTION</span>
+          <span class="tag-rating">★ 8.9 IMDb</span>
+        </div>
+        <h1 id="billboard-title" class="hero-title">Tears of Steel: Nexus</h1>
+        <p id="billboard-desc" class="hero-desc">
+          In a futuristic dystopian Amsterdam, a syndicate of scientists and resistance fighters execute a high-stakes cybernetic experiment to rescue Earth from towering biomechanical automata.
+        </p>
+        <div class="hero-buttons">
+          <button id="billboard-watch-btn" class="btn-watch-now">▶ Watch Now</button>
+          <a href="https://cinejoy.pk/" target="_blank" rel="noopener noreferrer" class="btn-fav">Browse on Cinejoy.pk ↗</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trending Movies -->
+    <div class="section-header">
+      <div class="section-title">Trending Movies & Shows</div>
+    </div>
+    <div id="media-container" class="media-grid"></div>
+
+    <!-- Top Blockbusters -->
+    <div class="section-header">
+      <div class="section-title">Top IMDb Rated Releases</div>
+    </div>
+    <div id="top-container" class="media-grid"></div>
+  </main>
+
+  <!-- Cinema Player Modal -->
+  <div id="cinema-modal" class="cinema-modal">
+    <div class="cinema-box">
+      <div class="modal-bar">
+        <div id="cinema-title" class="modal-title">Movie Title</div>
+        <button id="close-cinema" class="modal-close">✕</button>
+      </div>
+
+      <div class="viewport">
+        <video id="cine-video" controls autoplay playsinline>
+          <source id="video-source" src="" type="video/mp4">
+          Your browser does not support HTML5 video.
+        </video>
+      </div>
+
+      <div class="server-tabs">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 11px; font-weight: 700; color: var(--cine-text-muted); text-transform: uppercase;">Streaming Server:</span>
+          <div class="server-buttons">
+            <button class="server-btn active">⚡ CineStream HD</button>
+            <button class="server-btn">Server 2 (FastCloud)</button>
+            <button class="server-btn">Server 3 (Mirror)</button>
+          </div>
+        </div>
+        <div>
+          <span style="font-size: 12px; color: var(--cine-green); font-weight: 700;">● 1080p Full HD</span>
+        </div>
+      </div>
+
+      <div class="modal-details">
+        <div id="cinema-synopsis" class="modal-synopsis"></div>
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; color:var(--cine-text-muted); border-top:1px solid var(--cine-border); pt:10px;">
+          <span>Unblocked Cinejoy Media Player</span>
+          <a href="https://cinejoy.pk/" target="_blank" rel="noopener noreferrer" style="color:var(--cine-green); text-decoration:none; font-weight:700;">
+            Open on Cinejoy.pk Official ↗
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const CATALOG = [
+      {
+        id: "tears-of-steel",
+        title: "Tears of Steel",
+        type: "movie",
+        genre: "Sci-Fi",
+        year: 2024,
+        rating: 8.9,
+        quality: "4K UHD",
+        poster: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=80",
+        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
+        desc: "In a futuristic dystopian Amsterdam, scientists and freedom fighters risk everything to avert world collapse against mechanical colossi."
+      },
+      {
+        id: "dune-awakening",
+        title: "Cosmic Odyssey: Arrakis",
+        type: "movie",
+        genre: "Sci-Fi",
+        year: 2024,
+        rating: 8.8,
+        quality: "1080p",
+        poster: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&auto=format&fit=crop&q=80",
+        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackSeeTheWorld.mp4",
+        desc: "Epic space expedition exploring harsh desert exoplanets with hidden ancient technologies and galactic conflict."
+      },
+      {
+        id: "big-buck-bunny",
+        title: "Big Buck Bunny",
+        type: "movie",
+        genre: "Animation",
+        year: 2023,
+        rating: 8.5,
+        quality: "1080p",
+        poster: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=600&auto=format&fit=crop&q=80",
+        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+        desc: "A massive, gentle rabbit exacts clever revenge on bullies in this beloved animated classic."
+      },
+      {
+        id: "stranger-realm",
+        title: "The Neon Syndicate",
+        type: "tv",
+        genre: "Sci-Fi",
+        year: 2024,
+        rating: 9.1,
+        quality: "4K HDR",
+        poster: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=600&auto=format&fit=crop&q=80",
+        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+        desc: "Supernatural occurrences plague an underground research colony as anomalous portals open beneath the city."
+      },
+      {
+        id: "sintel-dragon",
+        title: "Sintel: Dragon Quest",
+        type: "anime",
+        genre: "Anime",
+        year: 2024,
+        rating: 8.7,
+        quality: "1080p",
+        poster: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80",
+        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+        desc: "A fierce warrior embarks across high mountain ranges to reclaim her stolen companion from the dragon's lair."
+      },
+      {
+        id: "speed-rivals",
+        title: "Grand Prix: Overdrive",
+        type: "movie",
+        genre: "Action",
+        year: 2024,
+        rating: 8.4,
+        quality: "4K UHD",
+        poster: "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&auto=format&fit=crop&q=80",
+        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+        desc: "Underground street racers push custom supercars to extreme limits through neon illuminated expressways."
+      },
+      {
+        id: "night-undead",
+        title: "Night of the Living Dead",
+        type: "movie",
+        genre: "Horror",
+        year: 1968,
+        rating: 8.6,
+        quality: "Remastered",
+        poster: "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?w=600&auto=format&fit=crop&q=80",
+        videoUrl: "https://archive.org/download/night_of_the_living_dead/night_of_the_living_dead_512kb.mp4",
+        desc: "The timeless cinema horror masterpiece following survivors trapped in a farmhouse against hordes of the undead."
+      },
+      {
+        id: "cyber-chase",
+        title: "Cyber City Chronicles",
+        type: "tv",
+        genre: "Anime",
+        year: 2024,
+        rating: 9.0,
+        quality: "1080p",
+        poster: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=600&auto=format&fit=crop&q=80",
+        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+        desc: "A cyber-enhanced detective navigates a corrupt metropolis uncovering rogue synthetic intelligence."
+      }
+    ];
+
+    let currentFilter = 'all';
+    let searchQuery = '';
+
+    function renderCatalog() {
+      const mainGrid = document.getElementById('media-container');
+      const topGrid = document.getElementById('top-container');
+
+      const filtered = CATALOG.filter(item => {
+        if (currentFilter === 'movie' && item.type !== 'movie') return false;
+        if (currentFilter === 'tv' && item.type !== 'tv') return false;
+        if (currentFilter === 'anime' && item.type !== 'anime') return false;
+        if (currentFilter === 'top' && item.rating < 8.7) return false;
+
+        if (searchQuery.trim()) {
+          const q = searchQuery.toLowerCase();
+          return item.title.toLowerCase().includes(q) || item.desc.toLowerCase().includes(q) || item.genre.toLowerCase().includes(q);
+        }
+        return true;
+      });
+
+      mainGrid.innerHTML = '';
+      topGrid.innerHTML = '';
+
+      filtered.forEach((item, index) => {
+        const card = createCard(item);
+        if (index < 4) mainGrid.appendChild(card);
+        else topGrid.appendChild(card);
+      });
+
+      if (topGrid.children.length === 0 && filtered.length > 0) {
+        filtered.forEach(item => topGrid.appendChild(createCard(item)));
+      }
+    }
+
+    function createCard(item) {
+      const card = document.createElement('div');
+      card.className = 'media-card';
+      card.innerHTML = `
+        <div class="media-poster-box">
+          <img src="${item.poster}" alt="${item.title}" loading="lazy">
+          <div class="media-badge">${item.quality}</div>
+          <div class="play-hover-overlay">
+            <div class="play-circle">▶</div>
+          </div>
+        </div>
+        <div class="media-info">
+          <div class="media-title">${item.title}</div>
+          <div class="media-sub">
+            <span>${item.genre} · ${item.year}</span>
+            <span style="color:#fbbf24; font-weight:700;">★ ${item.rating}</span>
+          </div>
+        </div>
+      `;
+      card.onclick = () => openCinema(item);
+      return card;
+    }
+
+    function openCinema(item) {
+      const modal = document.getElementById('cinema-modal');
+      const title = document.getElementById('cinema-title');
+      const syn = document.getElementById('cinema-synopsis');
+      const video = document.getElementById('cine-video');
+      const source = document.getElementById('video-source');
+
+      title.textContent = item.title + ' (' + item.year + ')';
+      syn.textContent = item.desc;
+      source.src = item.videoUrl;
+      video.load();
+      video.play().catch(() => {});
+
+      modal.style.display = 'flex';
+    }
+
+    function closeCinema() {
+      const modal = document.getElementById('cinema-modal');
+      const video = document.getElementById('cine-video');
+      video.pause();
+      modal.style.display = 'none';
+    }
+
+    // Filter Buttons
+    document.querySelectorAll('.nav-item').forEach(btn => {
+      btn.onclick = () => {
+        document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.getAttribute('data-filter');
+        renderCatalog();
+      };
+    });
+
+    // Search
+    document.getElementById('cine-search').oninput = e => {
+      searchQuery = e.target.value;
+      renderCatalog();
+    };
+
+    // Billboard watch button
+    document.getElementById('billboard-watch-btn').onclick = () => {
+      openCinema(CATALOG[0]);
+    };
+
+    // Modal Close
+    document.getElementById('close-cinema').onclick = closeCinema;
+    window.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeCinema();
+    });
+
+    renderCatalog();
+  </script>
+</body>
+</html>

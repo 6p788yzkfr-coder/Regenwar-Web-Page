@@ -16,6 +16,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./style.css">
+    <!-- Fast Preloading for Heavy 3D/Action Games -->
+    <link rel="prefetch" href="./games/gladihoppers/Build/UnityLoader.js" as="script">
+    <link rel="prefetch" href="./games/gladihoppers/Build/Gladihoppers.json" as="fetch">
+    <link rel="prefetch" href="./games/getaway-shootout/Build/UnityLoader.js" as="script">
+    <link rel="prefetch" href="./games/getaway-shootout/GetawayShootout.json" as="fetch">
   </head>
   <body>
     <!-- Top Bar Navigation (3-Zone Contract) -->
@@ -31,6 +36,7 @@
         <!-- Zone 2: Navigation Links -->
         <nav class="nav-links">
           <button class="nav-btn active" data-category="All">All Games</button>
+          <button class="nav-btn" data-category="Cinema">🎬 Movies</button>
           <button class="nav-btn" data-category="Arcade">Arcade</button>
           <button class="nav-btn" data-category="Puzzle">Puzzle</button>
           <button class="nav-btn" data-category="Action">Action</button>
@@ -141,6 +147,7 @@
         <!-- Category Tabs -->
         <div class="category-tabs">
           <button class="tab-btn active" data-category="All">All Games</button>
+          <button class="tab-btn" data-category="Cinema">🍿 Movies & TV</button>
           <button class="tab-btn" data-category="Arcade">Arcade</button>
           <button class="tab-btn" data-category="Puzzle">Puzzle</button>
           <button class="tab-btn" data-category="Action">Action</button>
@@ -213,6 +220,7 @@
             </div>
           </div>
           <div class="modal-actions">
+            <button id="modal-cloak-blank-btn" class="icon-btn" title="Open in unblocked about:blank tab [Securly / GoGuardian Bypass]" style="color: var(--accent-emerald);">🛡️</button>
             <button id="modal-fav-btn" class="icon-btn" title="Toggle Favorite">🤍</button>
             <button id="modal-reload-btn" class="icon-btn" title="Reload Game">🔄</button>
             <button id="modal-fullscreen-btn" class="icon-btn" title="Toggle Fullscreen">⛶</button>

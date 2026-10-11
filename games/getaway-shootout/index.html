@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Getaway Shootout - Unblocked Fast</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #0f172a;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      user-select: none;
+    }
+    #gameContainer {
+      width: 100% !important;
+      height: 100% !important;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 10;
+    }
+    #gameContainer canvas {
+      width: 100% !important;
+      height: 100% !important;
+      display: block;
+    }
+
+    #loadingOverlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, #1e293b 0%, #090d16 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+      color: #fff;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+    #loadingOverlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .game-logo {
+      font-size: 48px;
+      margin-bottom: 8px;
+      filter: drop-shadow(0 0 16px rgba(245, 158, 11, 0.4));
+      animation: float 2s ease-in-out infinite alternate;
+    }
+    @keyframes float {
+      from { transform: translateY(0px) scale(1); }
+      to { transform: translateY(-6px) scale(1.05); }
+    }
+    .game-title {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+      color: #fbbf24;
+      text-transform: uppercase;
+      text-shadow: 0 2px 10px rgba(245, 158, 11, 0.3);
+    }
+    .game-subtitle {
+      font-size: 13px;
+      color: #94a3b8;
+      margin-bottom: 24px;
+      letter-spacing: 0.5px;
+    }
+    .progress-box {
+      width: 280px;
+      max-width: 80vw;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 9999px;
+      padding: 3px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    }
+    .progress-bar {
+      height: 10px;
+      width: 0%;
+      background: linear-gradient(90deg, #f59e0b, #ef4444);
+      border-radius: 9999px;
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.8);
+      transition: width 0.15s ease-out;
+    }
+    .status-text {
+      font-size: 13px;
+      font-weight: 600;
+      color: #e2e8f0;
+      margin-top: 12px;
+      font-family: monospace;
+    }
+    .tips-text {
+      font-size: 11px;
+      color: #64748b;
+      margin-top: 16px;
+      display: flex;
+      gap: 12px;
+    }
+    .tips-badge {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fde68a;
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <div id="loadingOverlay">
+    <div class="game-logo">🚁</div>
+    <div class="game-title">Getaway Shootout</div>
+    <div class="game-subtitle">High-Speed Unblocked Edition</div>
+    <div class="progress-box">
+      <div id="progressBar" class="progress-bar"></div>
+    </div>
+    <div id="statusText" class="status-text">Booting physics engine: 0%</div>
+    <div class="tips-text">
+      <span class="tips-badge">⚡ 2-Player Physics</span>
+      <span class="tips-badge">🛡️ Securly Bypass</span>
+      <span class="tips-badge">🚀 Instant Load</span>
+    </div>
+  </div>
+
+  <div id="gameContainer"></div>
+
+  <script src="Build/UnityLoader.js"></script>
+  <script>
+    (function() {
+      const progressBar = document.getElementById('progressBar');
+      const statusText = document.getElementById('statusText');
+      const overlay = document.getElementById('loadingOverlay');
+
+      function updateProgress(progress) {
+        const percent = Math.min(100, Math.round(progress * 100));
+        if (progressBar) progressBar.style.width = percent + '%';
+        if (statusText) statusText.textContent = percent >= 100 ? 'Starting Getaway Race...' : 'Loading Game Assets: ' + percent + '%';
+        if (percent >= 100) {
+          setTimeout(function() {
+            if (overlay) overlay.classList.add('hidden');
+          }, 350);
+        }
+      }
+
+      try {
+        var gameInstance = UnityLoader.instantiate("gameContainer", "GetawayShootout.json", {
+          onProgress: function(instance, progress) {
+            updateProgress(progress);
+          }
+        });
+
+        window.addEventListener('click', function() {
+          const canvas = document.querySelector('#gameContainer canvas');
+          if (canvas) canvas.focus();
+        });
+      } catch (err) {
+        console.error("Getaway Shootout startup error:", err);
+        if (statusText) statusText.textContent = "Error loading game: " + err.message;
+      }
+    })();
+  </script>
+</body>
+</html>

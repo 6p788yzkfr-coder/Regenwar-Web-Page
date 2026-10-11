@@ -7,6 +7,24 @@
   // Master initial games list
   const DEFAULT_GAMES = [
     {
+      id: "cinejoy-movies",
+      title: "Cinejoy Movies & TV",
+      category: "Cinema",
+      badge: "Movies",
+      rating: 5.0,
+      plays: "540K",
+      description: "Stream full HD movies and TV shows free. Features popular sci-fi, blockbusters, action, animated films, and direct connection to cinejoy.pk.",
+      controls: [
+        { key: "Mouse Click", action: "Select movie & stream" },
+        { key: "Fullscreen [F]", action: "Toggle cinema theatre mode" },
+        { key: "Cinejoy.pk Button", action: "Open full cinejoy.pk catalog" }
+      ],
+      src: "./games/cinejoy.html",
+      iframe: '<iframe src="./games/cinejoy.html" title="Cinejoy Movies & TV" class="game-frame" allow="fullscreen; autoplay" allowfullscreen></iframe>',
+      accentColor: "#95FF50",
+      thumbnailEmoji: "🍿"
+    },
+    {
       id: "eaglercraft",
       title: "Eaglercraft 1.8.8",
       category: "Action",
@@ -22,8 +40,8 @@
         { key: "SPACE", action: "Jump" },
         { key: "E", action: "Open inventory" }
       ],
-      src: "https://eaglercraft1-8.github.io/",
-      iframe: '<iframe src="https://eaglercraft1-8.github.io/" title="Eaglercraft 1.8.8" class="game-frame" allow="fullscreen; autoplay; gamepad; pointer-lock" allowfullscreen></iframe>',
+      src: "./games/eaglercraft.html",
+      iframe: '<iframe src="./games/eaglercraft.html" title="Eaglercraft 1.8.8" class="game-frame" allow="fullscreen; autoplay; gamepad; pointer-lock" allowfullscreen></iframe>',
       accentColor: "#10b981",
       thumbnailEmoji: "⛏️"
     },
@@ -41,8 +59,8 @@
         { key: "SPACE", action: "Switch stance / Jump" },
         { key: "E", action: "Throw javelin" }
       ],
-      src: "https://gladihoppers-pro.github.io/file/",
-      iframe: '<iframe src="https://gladihoppers-pro.github.io/file/" title="Gladihoppers" class="game-frame" allow="fullscreen; autoplay; gamepad" allowfullscreen></iframe>',
+      src: "./games/gladihoppers.html",
+      iframe: '<iframe src="./games/gladihoppers.html" title="Gladihoppers" class="game-frame" allow="fullscreen; autoplay; gamepad" allowfullscreen></iframe>',
       accentColor: "#ef4444",
       thumbnailEmoji: "⚔️"
     },
@@ -60,8 +78,8 @@
         { key: "I / O (P2)", action: "Player 2 Jump Left / Right" },
         { key: "P (P2)", action: "Player 2 Shoot" }
       ],
-      src: "https://games.crazygames.com/en_US/getaway-shootout/index.html",
-      iframe: '<iframe src="https://games.crazygames.com/en_US/getaway-shootout/index.html" title="Getaway Shootout" class="game-frame" allow="fullscreen; autoplay; gamepad" allowfullscreen></iframe>',
+      src: "./games/getaway-shootout.html",
+      iframe: '<iframe src="./games/getaway-shootout.html" title="Getaway Shootout" class="game-frame" allow="fullscreen; autoplay; gamepad" allowfullscreen></iframe>',
       accentColor: "#f59e0b",
       thumbnailEmoji: "🚁"
     },
@@ -762,6 +780,33 @@
 
     // Modal controls
     document.getElementById('close-player-btn').onclick = closePlayer;
+    document.getElementById('modal-cloak-blank-btn').onclick = () => {
+      if (!activeGame) return;
+      const blankWin = window.open('about:blank', '_blank');
+      if (!blankWin) {
+        alert('Popup blocked! Please allow popups to open in unblocked about:blank mode.');
+        return;
+      }
+      blankWin.document.title = 'Google Docs';
+      const icon = blankWin.document.createElement('link');
+      icon.rel = 'icon';
+      icon.href = 'https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico';
+      blankWin.document.head.appendChild(icon);
+
+      const frame = blankWin.document.createElement('iframe');
+      frame.style.position = 'fixed';
+      frame.style.inset = '0';
+      frame.style.width = '100vw';
+      frame.style.height = '100vh';
+      frame.style.border = 'none';
+      frame.src = window.location.origin + '/' + activeGame.src.replace(/^\.\//, '');
+      frame.allow = 'fullscreen; autoplay; gamepad; pointer-lock';
+      blankWin.document.body.style.margin = '0';
+      blankWin.document.body.style.padding = '0';
+      blankWin.document.body.style.overflow = 'hidden';
+      blankWin.document.body.style.background = '#000';
+      blankWin.document.body.appendChild(frame);
+    };
     document.getElementById('modal-reload-btn').onclick = () => {
       if (activeGame) launchGame(activeGame);
     };
