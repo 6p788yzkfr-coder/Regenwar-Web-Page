@@ -39,6 +39,37 @@
     "thumbnailEmoji": "⛏️"
   },
   {
+    "id": "gladihoppers",
+    "title": "Gladihoppers",
+    "category": "Action",
+    "badge": "Hot",
+    "rating": 4.9,
+    "plays": "360K",
+    "description": "Wacky 2D physics-based gladiator battle simulator! Dual battle stances, directional strikes, brutal arena combat, and javelins.",
+    "controls": [
+      {
+        "key": "WASD",
+        "action": "Move & Hop around arena"
+      },
+      {
+        "key": "Arrow Keys",
+        "action": "Directional attack (High/Low/Thrust)"
+      },
+      {
+        "key": "SPACE",
+        "action": "Switch stance / Jump"
+      },
+      {
+        "key": "E",
+        "action": "Throw javelin"
+      }
+    ],
+    "src": "https://gladihoppers-pro.github.io/file/",
+    "iframe": "<iframe src=\"https://gladihoppers-pro.github.io/file/\" title=\"Gladihoppers\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allow=\"fullscreen; autoplay; gamepad\" allowfullscreen></iframe>",
+    "accentColor": "#ef4444",
+    "thumbnailEmoji": "⚔️"
+  },
+  {
     "id": "2048",
     "title": "2048",
     "category": "Puzzle",
