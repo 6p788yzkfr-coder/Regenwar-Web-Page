@@ -36,14 +36,14 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: radial-gradient(circle at center, #1f2937 0%, #0d1117 100%);
+      background: radial-gradient(circle at center, #1e293b 0%, #090d16 100%);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       z-index: 50;
       color: #fff;
-      transition: opacity 0.4s ease, visibility 0.4s ease;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
     }
     #loadingOverlay.hidden {
       opacity: 0;
@@ -51,23 +51,23 @@
       pointer-events: none;
     }
     .game-logo {
-      font-size: 48px;
-      margin-bottom: 8px;
-      filter: drop-shadow(0 0 16px rgba(239, 68, 68, 0.4));
-      animation: float 2s ease-in-out infinite alternate;
+      font-size: 52px;
+      margin-bottom: 10px;
+      filter: drop-shadow(0 0 20px rgba(239, 68, 68, 0.5));
+      animation: bounce 1.8s ease-in-out infinite alternate;
     }
-    @keyframes float {
+    @keyframes bounce {
       from { transform: translateY(0px) scale(1); }
-      to { transform: translateY(-6px) scale(1.05); }
+      to { transform: translateY(-8px) scale(1.06); }
     }
     .game-title {
-      font-size: 24px;
+      font-size: 26px;
       font-weight: 800;
-      letter-spacing: 1px;
+      letter-spacing: 1.5px;
       margin-bottom: 4px;
       color: #f87171;
       text-transform: uppercase;
-      text-shadow: 0 2px 10px rgba(239, 68, 68, 0.3);
+      text-shadow: 0 2px 14px rgba(239, 68, 68, 0.4);
     }
     .game-subtitle {
       font-size: 13px;
@@ -76,48 +76,151 @@
       letter-spacing: 0.5px;
     }
     .progress-box {
-      width: 280px;
-      max-width: 80vw;
+      width: 300px;
+      max-width: 82vw;
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: 9999px;
       padding: 3px;
       overflow: hidden;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
     }
     .progress-bar {
-      height: 10px;
+      height: 12px;
       width: 0%;
-      background: linear-gradient(90deg, #ef4444, #f97316);
+      background: linear-gradient(90deg, #ef4444, #f97316, #eab308);
       border-radius: 9999px;
-      box-shadow: 0 0 12px rgba(239, 68, 68, 0.8);
+      box-shadow: 0 0 14px rgba(239, 68, 68, 0.8);
       transition: width 0.15s ease-out;
     }
     .status-text {
       font-size: 13px;
       font-weight: 600;
       color: #e2e8f0;
-      margin-top: 12px;
-      font-family: monospace;
+      margin-top: 14px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     }
     .tips-text {
       font-size: 11px;
       color: #64748b;
-      margin-top: 16px;
+      margin-top: 18px;
       display: flex;
-      gap: 12px;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
     }
     .tips-badge {
       background: rgba(239, 68, 68, 0.15);
       color: #fca5a5;
-      padding: 2px 8px;
-      border-radius: 4px;
+      padding: 3px 10px;
+      border-radius: 9999px;
       border: 1px solid rgba(239, 68, 68, 0.3);
+      font-weight: 500;
     }
   </style>
 
+  <!-- Complete Poki SDK and PokiBridge Implementation -->
   <script>
     (function() {
+      window.config = window.config || {
+        cachedDecompressedFileSizes: {
+          "Gladihoppers.data.unityweb": 25165824,
+          "Gladihoppers.wasm.code.unityweb": 23068672,
+          "Gladihoppers.wasm.framework.unityweb": 510976
+        }
+      };
+
+      window._cachedAdPositions = {};
+      let pokiBridgeObjectName = null;
+      window.pokiReady = true;
+
+      // Unity PokiBridge hooks called from WebAssembly
+      window.initPokiBridge = function(name) {
+        pokiBridgeObjectName = name;
+        window.pokiBridge = name;
+        window.pokiReady = true;
+        
+        function sendReady() {
+          const inst = window.unityGame || window.gameInstance;
+          if (inst && typeof inst.SendMessage === 'function') {
+            try {
+              inst.SendMessage(name, 'ready');
+            } catch(e) {
+              console.warn("initPokiBridge send ready warning:", e);
+            }
+          } else {
+            setTimeout(sendReady, 50);
+          }
+        }
+        sendReady();
+      };
+
+      window.commercialBreak = function() {
+        const inst = window.unityGame || window.gameInstance;
+        const bridge = pokiBridgeObjectName || window.pokiBridge;
+        if (inst && bridge && typeof inst.SendMessage === 'function') {
+          try {
+            inst.SendMessage(bridge, 'commercialBreakCompleted');
+          } catch(e) {}
+        }
+        return Promise.resolve();
+      };
+
+      window.rewardedBreak = function() {
+        const inst = window.unityGame || window.gameInstance;
+        const bridge = pokiBridgeObjectName || window.pokiBridge;
+        if (inst && bridge && typeof inst.SendMessage === 'function') {
+          try {
+            inst.SendMessage(bridge, 'rewardedBreakCompleted', 'true');
+          } catch(e) {}
+        }
+        return Promise.resolve(true);
+      };
+
+      window.shareableURL = function() {
+        const inst = window.unityGame || window.gameInstance;
+        const bridge = pokiBridgeObjectName || window.pokiBridge;
+        if (inst && bridge && typeof inst.SendMessage === 'function') {
+          try {
+            inst.SendMessage(bridge, 'shareableURLResolved', window.location.href);
+          } catch(e) {}
+        }
+        return Promise.resolve(window.location.href);
+      };
+
+      window.getUser = function() {
+        const inst = window.unityGame || window.gameInstance;
+        const bridge = pokiBridgeObjectName || window.pokiBridge;
+        if (inst && bridge && typeof inst.SendMessage === 'function') {
+          try {
+            inst.SendMessage(bridge, 'getUserResolved', '{}');
+          } catch(e) {}
+        }
+        return Promise.resolve({});
+      };
+
+      window.getToken = function() {
+        const inst = window.unityGame || window.gameInstance;
+        const bridge = pokiBridgeObjectName || window.pokiBridge;
+        if (inst && bridge && typeof inst.SendMessage === 'function') {
+          try {
+            inst.SendMessage(bridge, 'getTokenResolved', '');
+          } catch(e) {}
+        }
+        return Promise.resolve('');
+      };
+
+      window.login = function() {
+        const inst = window.unityGame || window.gameInstance;
+        const bridge = pokiBridgeObjectName || window.pokiBridge;
+        if (inst && bridge && typeof inst.SendMessage === 'function') {
+          try {
+            inst.SendMessage(bridge, 'loginResolved');
+          } catch(e) {}
+        }
+        return Promise.resolve();
+      };
+
       const baseSDK = {
         init: function() { return Promise.resolve(); },
         initWithVideoHB: function() { return Promise.resolve(); },
@@ -130,11 +233,26 @@
           if (overlay) overlay.classList.add('hidden');
         },
         gameLoadingProgress: function(progress) {
-          const val = Math.min(100, Math.round((progress || 0) * 100));
+          let val = 0;
+          if (typeof progress === 'number') {
+            val = progress * 100;
+          } else if (typeof progress === 'string') {
+            try {
+              const parsed = JSON.parse(progress);
+              if (typeof parsed.percentageDone === 'number') val = parsed.percentageDone * 100;
+              else if (typeof parsed === 'number') val = parsed * 100;
+            } catch (e) {
+              const n = parseFloat(progress);
+              if (!isNaN(n)) val = n <= 1 ? n * 100 : n;
+            }
+          } else if (progress && typeof progress.percentageDone === 'number') {
+            val = progress.percentageDone * 100;
+          }
+          val = Math.min(100, Math.max(0, Math.round(val)));
           const bar = document.getElementById('progressBar');
           const txt = document.getElementById('statusText');
           if (bar) bar.style.width = val + '%';
-          if (txt) txt.textContent = 'Loading Gladiator Arena: ' + val + '%';
+          if (txt) txt.textContent = val >= 100 ? 'Entering Arena...' : 'Loading Gladiator Arena: ' + val + '%';
         },
         gameLoadingStart: function() {},
         gameplayStart: function() {},
@@ -144,11 +262,19 @@
         roundStart: function() {},
         setPlayerAge: function() {},
         togglePlayerAdvertisingConsent: function() {},
-        commercialBreak: function() { return Promise.resolve(); },
-        rewardedBreak: function() { return Promise.resolve(true); },
+        commercialBreak: function() {
+          return window.commercialBreak();
+        },
+        rewardedBreak: function() {
+          return window.rewardedBreak();
+        },
         isAdBlocked: function() { return false; },
         setDebug: function() {},
-        captureError: function() {}
+        captureError: function() {},
+        shareableURL: function() { return window.shareableURL(); },
+        getUser: function() { return window.getUser(); },
+        getToken: function() { return window.getToken(); },
+        login: function() { return window.login(); }
       };
 
       window.PokiSDK = new Proxy(baseSDK, {
@@ -168,16 +294,17 @@
     <div class="progress-box">
       <div id="progressBar" class="progress-bar"></div>
     </div>
-    <div id="statusText" class="status-text">Accelerating engine: 0%</div>
+    <div id="statusText" class="status-text">Preparing Gladiator Arena: 0%</div>
     <div class="tips-text">
       <span class="tips-badge">⚡ Instant Cache</span>
       <span class="tips-badge">🛡️ Securly Bypass</span>
-      <span class="tips-badge">🎮 WebAssembly</span>
+      <span class="tips-badge">🎮 Unity WebGL</span>
     </div>
   </div>
 
   <div id="gameContainer"></div>
 
+  <!-- Local Standalone Unity 2019 WebGL Loader with Patched UnityModule -->
   <script src="Build/UnityLoader.js"></script>
   <script>
     (function() {
@@ -186,13 +313,13 @@
       const overlay = document.getElementById('loadingOverlay');
 
       function updateProgress(progress) {
-        const percent = Math.min(100, Math.round(progress * 100));
+        const percent = Math.min(100, Math.max(0, Math.round(progress * 100)));
         if (progressBar) progressBar.style.width = percent + '%';
-        if (statusText) statusText.textContent = percent >= 100 ? 'Starting Arena Combat...' : 'Loading Engine Assets: ' + percent + '%';
+        if (statusText) statusText.textContent = percent >= 100 ? 'Entering Arena Combat...' : 'Loading Engine Assets: ' + percent + '%';
         if (percent >= 100) {
           setTimeout(function() {
             if (overlay) overlay.classList.add('hidden');
-          }, 400);
+          }, 300);
         }
       }
 
@@ -200,8 +327,16 @@
         var gameInstance = UnityLoader.instantiate("gameContainer", "Build/Gladihoppers.json", {
           onProgress: function(instance, progress) {
             updateProgress(progress);
+          },
+          Module: {
+            onRuntimeInitialized: function() {
+              if (overlay) overlay.classList.add('hidden');
+            }
           }
         });
+
+        window.unityGame = gameInstance;
+        window.gameInstance = gameInstance;
 
         window.addEventListener('click', function() {
           const canvas = document.querySelector('#gameContainer canvas');
@@ -209,7 +344,7 @@
         });
       } catch (err) {
         console.error("Gladihoppers startup error:", err);
-        if (statusText) statusText.textContent = "Error loading game: " + err.message;
+        if (statusText) statusText.textContent = "Error: " + err.message;
       }
     })();
   </script>
