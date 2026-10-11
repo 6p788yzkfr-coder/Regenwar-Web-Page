@@ -27,6 +27,7 @@
       flex-direction: column;
     }
 
+    /* Top Cinejoy Navbar */
     header {
       background: rgba(4, 5, 8, 0.96);
       border-bottom: 1px solid var(--cine-border);
@@ -135,6 +136,7 @@
       transform: scale(1.02);
     }
 
+    /* Main Content */
     main {
       flex: 1;
       width: 100%;
@@ -143,6 +145,7 @@
       padding: 0 20px 40px;
     }
 
+    /* Hero Billboard Section */
     .hero-billboard {
       position: relative;
       width: 100%;
@@ -254,6 +257,7 @@
       background: rgba(255, 255, 255, 0.2);
     }
 
+    /* Section Rows */
     .section-header {
       display: flex;
       align-items: center;
@@ -277,6 +281,7 @@
       box-shadow: 0 0 10px var(--cine-green-glow);
     }
 
+    /* Media Posters Grid */
     .media-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -368,6 +373,7 @@
       color: var(--cine-text-muted);
     }
 
+    /* Video Player Modal with Multi-Server Switcher */
     .cinema-modal {
       position: fixed;
       inset: 0;
@@ -506,6 +512,7 @@
   </header>
 
   <main>
+    <!-- Featured Billboard -->
     <div id="billboard" class="hero-billboard" style="background-image: url('https://images.unsplash.com/photo-1534447677768-be436bb09401?w=1600&auto=format&fit=crop&q=80');">
       <div class="hero-content">
         <div class="hero-tags">
@@ -525,17 +532,20 @@
       </div>
     </div>
 
+    <!-- Trending Movies -->
     <div class="section-header">
       <div class="section-title">Trending Movies & Shows</div>
     </div>
     <div id="media-container" class="media-grid"></div>
 
+    <!-- Top Blockbusters -->
     <div class="section-header">
       <div class="section-title">Top IMDb Rated Releases</div>
     </div>
     <div id="top-container" class="media-grid"></div>
   </main>
 
+  <!-- Cinema Player Modal -->
   <div id="cinema-modal" class="cinema-modal">
     <div class="cinema-box">
       <div class="modal-bar">
@@ -756,6 +766,7 @@
       modal.style.display = 'none';
     }
 
+    // Filter Buttons
     document.querySelectorAll('.nav-item').forEach(btn => {
       btn.onclick = () => {
         document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
@@ -765,15 +776,18 @@
       };
     });
 
+    // Search
     document.getElementById('cine-search').oninput = e => {
       searchQuery = e.target.value;
       renderCatalog();
     };
 
+    // Billboard watch button
     document.getElementById('billboard-watch-btn').onclick = () => {
       openCinema(CATALOG[0]);
     };
 
+    // Modal Close
     document.getElementById('close-cinema').onclick = closeCinema;
     window.addEventListener('keydown', e => {
       if (e.key === 'Escape') closeCinema();
