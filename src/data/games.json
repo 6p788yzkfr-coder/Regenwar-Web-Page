@@ -11,8 +11,8 @@
       { "key": "Arrow Keys / WASD", "action": "Slide all tiles" },
       { "key": "Swipe", "action": "Slide on mobile / touch screen" }
     ],
-    "src": "/games/2048.html",
-    "iframe": "<iframe src=\"/games/2048.html\" title=\"2048\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
+    "src": "./games/2048.html",
+    "iframe": "<iframe src=\"./games/2048.html\" title=\"2048\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
     "accentColor": "#f59e0b",
     "thumbnailEmoji": "🔢"
   },
@@ -28,8 +28,8 @@
       { "key": "Arrow Keys / WASD", "action": "Steer snake direction" },
       { "key": "On-screen D-Pad", "action": "Touch navigation" }
     ],
-    "src": "/games/snake.html",
-    "iframe": "<iframe src=\"/games/snake.html\" title=\"Retro Snake\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
+    "src": "./games/snake.html",
+    "iframe": "<iframe src=\"./games/snake.html\" title=\"Retro Snake\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
     "accentColor": "#10b981",
     "thumbnailEmoji": "🐍"
   },
@@ -47,8 +47,8 @@
       { "key": "↓ / S", "action": "Soft drop" },
       { "key": "SPACE", "action": "Instant hard drop" }
     ],
-    "src": "/games/tetris.html",
-    "iframe": "<iframe src=\"/games/tetris.html\" title=\"Tetris Block Master\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
+    "src": "./games/tetris.html",
+    "iframe": "<iframe src=\"./games/tetris.html\" title=\"Tetris Block Master\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
     "accentColor": "#06b6d4",
     "thumbnailEmoji": "🧩"
   },
@@ -63,8 +63,8 @@
     "controls": [
       { "key": "SPACE / Tap", "action": "Flap wings & rise" }
     ],
-    "src": "/games/flappy-bird.html",
-    "iframe": "<iframe src=\"/games/flappy-bird.html\" title=\"Flappy Wing\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
+    "src": "./games/flappy-bird.html",
+    "iframe": "<iframe src=\"./games/flappy-bird.html\" title=\"Flappy Wing\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
     "accentColor": "#eab308",
     "thumbnailEmoji": "🐤"
   },
@@ -80,8 +80,8 @@
       { "key": "← / → (A / D)", "action": "Move defense cannon" },
       { "key": "SPACE / Button", "action": "Fire laser blast" }
     ],
-    "src": "/games/space-invaders.html",
-    "iframe": "<iframe src=\"/games/space-invaders.html\" title=\"Space Invaders\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
+    "src": "./games/space-invaders.html",
+    "iframe": "<iframe src=\"./games/space-invaders.html\" title=\"Space Invaders\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
     "accentColor": "#ec4899",
     "thumbnailEmoji": "👾"
   },
@@ -98,8 +98,8 @@
       { "key": "W / S (Player 1)", "action": "Keyboard movement" },
       { "key": "I / K (Player 2)", "action": "Second player movement" }
     ],
-    "src": "/games/pong.html",
-    "iframe": "<iframe src=\"/games/pong.html\" title=\"Pong Classic 1972\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
+    "src": "./games/pong.html",
+    "iframe": "<iframe src=\"./games/pong.html\" title=\"Pong Classic 1972\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
     "accentColor": "#38bdf8",
     "thumbnailEmoji": "🏓"
   },
@@ -115,8 +115,8 @@
       { "key": "Mouse / Touch", "action": "Move paddle horizontally" },
       { "key": "← / →", "action": "Keyboard paddle steering" }
     ],
-    "src": "/games/breakout.html",
-    "iframe": "<iframe src=\"/games/breakout.html\" title=\"Breakout Smash\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
+    "src": "./games/breakout.html",
+    "iframe": "<iframe src=\"./games/breakout.html\" title=\"Breakout Smash\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
     "accentColor": "#f97316",
     "thumbnailEmoji": "🧱"
   },
@@ -132,8 +132,8 @@
       { "key": "SPACE / ↑", "action": "Jump over obstacles" },
       { "key": "↓", "action": "Duck under flying birds" }
     ],
-    "src": "/games/dino-run.html",
-    "iframe": "<iframe src=\"/games/dino-run.html\" title=\"T-Rex Dino Runner\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
+    "src": "./games/dino-run.html",
+    "iframe": "<iframe src=\"./games/dino-run.html\" title=\"T-Rex Dino Runner\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
     "accentColor": "#10b981",
     "thumbnailEmoji": "🦖"
   },
@@ -149,8 +149,8 @@
       { "key": "Left Click", "action": "Reveal safe cell" },
       { "key": "Right Click / Mode", "action": "Place or remove caution flag" }
     ],
-    "src": "/games/minesweeper.html",
-    "iframe": "<iframe src=\"/games/minesweeper.html\" title=\"Minesweeper Pro\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
+    "src": "./games/minesweeper.html",
+    "iframe": "<iframe src=\"./games/minesweeper.html\" title=\"Minesweeper Pro\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
     "accentColor": "#ef4444",
     "thumbnailEmoji": "💣"
   },
@@ -166,8 +166,8 @@
       { "key": "Mouse Click / Tap", "action": "Bake cookies" },
       { "key": "Shop Menu", "action": "Purchase automated bakery gear" }
     ],
-    "src": "/games/cookie-clicker.html",
-    "iframe": "<iframe src=\"/games/cookie-clicker.html\" title=\"Cookie Empire\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
+    "src": "./games/cookie-clicker.html",
+    "iframe": "<iframe src=\"./games/cookie-clicker.html\" title=\"Cookie Empire\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
     "accentColor": "#d97706",
     "thumbnailEmoji": "🍪"
   },
@@ -183,8 +183,8 @@
       { "key": "Click Column", "action": "Drop disc into column" },
       { "key": "Mode Toggle", "action": "Switch between AI and 2-Player local" }
     ],
-    "src": "/games/connect4.html",
-    "iframe": "<iframe src=\"/games/connect4.html\" title=\"Connect Four Battle\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
+    "src": "./games/connect4.html",
+    "iframe": "<iframe src=\"./games/connect4.html\" title=\"Connect Four Battle\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
     "accentColor": "#2563eb",
     "thumbnailEmoji": "🔴"
   },
@@ -201,8 +201,8 @@
       { "key": "↑ / W", "action": "Engage thruster propulsion" },
       { "key": "SPACE", "action": "Fire photon torpedo" }
     ],
-    "src": "/games/asteroids.html",
-    "iframe": "<iframe src=\"/games/asteroids.html\" title=\"Asteroids 1979\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
+    "src": "./games/asteroids.html",
+    "iframe": "<iframe src=\"./games/asteroids.html\" title=\"Asteroids 1979\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
     "accentColor": "#38bdf8",
     "thumbnailEmoji": "🚀"
   },
@@ -218,8 +218,8 @@
       { "key": "Keyboard Typing", "action": "Type matching word" },
       { "key": "ENTER", "action": "Confirm typed word" }
     ],
-    "src": "/games/speed-typing.html",
-    "iframe": "<iframe src=\"/games/speed-typing.html\" title=\"Speed Typer\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
+    "src": "./games/speed-typing.html",
+    "iframe": "<iframe src=\"./games/speed-typing.html\" title=\"Speed Typer\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
     "accentColor": "#a855f7",
     "thumbnailEmoji": "⌨️"
   },
@@ -234,8 +234,8 @@
     "controls": [
       { "key": "Click Grid Cell", "action": "Place X or O marker" }
     ],
-    "src": "/games/tic-tac-toe.html",
-    "iframe": "<iframe src=\"/games/tic-tac-toe.html\" title=\"Tic Tac Toe Master\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
+    "src": "./games/tic-tac-toe.html",
+    "iframe": "<iframe src=\"./games/tic-tac-toe.html\" title=\"Tic Tac Toe Master\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
     "accentColor": "#14b8a6",
     "thumbnailEmoji": "❌"
   }
