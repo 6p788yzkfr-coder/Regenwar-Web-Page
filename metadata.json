@@ -1,0 +1,6 @@
+{
+  "name": "NovaPlay Unblocked Games",
+  "description": "Fast, clean unblocked games portal featuring classic HTML5 arcade and puzzle games embedded seamlessly via JSON.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

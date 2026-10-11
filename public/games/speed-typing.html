@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Speed Typer</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+    body {
+      background: #090d16;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 12px;
+    }
+    .hud {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 480px;
+      margin-bottom: 12px;
+      font-family: monospace;
+      font-size: 16px;
+    }
+    #game-container {
+      position: relative;
+      width: 100%;
+      max-width: 480px;
+      height: 380px;
+      background: #0f172a;
+      border: 2px solid #1e293b;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+    .word {
+      position: absolute;
+      color: #38bdf8;
+      font-family: monospace;
+      font-size: 18px;
+      font-weight: 700;
+      background: #1e293b;
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid #334155;
+    }
+    .word.matching {
+      border-color: #f59e0b;
+      color: #f59e0b;
+    }
+    .word .matched {
+      color: #10b981;
+    }
+    .input-box {
+      width: 100%;
+      max-width: 480px;
+      margin-top: 12px;
+      display: flex;
+      gap: 8px;
+    }
+    input {
+      flex: 1;
+      background: #1e293b;
+      border: 2px solid #334155;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 18px;
+      padding: 10px 16px;
+      outline: none;
+      font-family: monospace;
+    }
+    input:focus { border-color: #38bdf8; }
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(9, 13, 22, 0.88);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      backdrop-filter: blur(2px);
+    }
+    .btn {
+      background: #38bdf8;
+      color: #032030;
+      font-weight: bold;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="hud">
+    <span>SCORE: <b id="score" style="color: #38bdf8;">0</b></span>
+    <span>LIVES: <b id="lives" style="color: #ef4444;">♥♥♥</b></span>
+    <span>WPM: <b id="wpm" style="color: #10b981;">0</b></span>
+  </div>
+
+  <div id="game-container">
+    <div id="overlay" class="overlay">
+      <h2 style="font-size: 26px; color: #38bdf8;">Speed Typer</h2>
+      <p style="color: #94a3b8; font-size: 14px;">Type words before they touch bottom!</p>
+      <button class="btn" id="start-btn">START GAME</button>
+    </div>
+  </div>
+
+  <div class="input-box">
+    <input type="text" id="type-input" placeholder="Type here..." autocomplete="off" autofocus>
+  </div>
+
+  <script>
+    const WORDS_POOL = [
+      "pixel", "arcade", "retro", "matrix", "vector", "cyber", "laser", "galaxy",
+      "shield", "rocket", "hyper", "boost", "speed", "combo", "turbo", "score",
+      "quest", "sonic", "alpha", "omega", "cloud", "storm", "flash", "light",
+      "portal", "craft", "nexus", "orbit", "prism", "pulse", "quantum", "stealth",
+      "vortex", "shadow", "future", "signal", "glitch", "runner", "strike", "titan"
+    ];
+
+    const container = document.getElementById('game-container');
+    const input = document.getElementById('type-input');
+    let words = [];
+    let score = 0, lives = 3, totalTyped = 0;
+    let startTime = null;
+    let isRunning = false;
+    let spawnTimer = null;
+    let loopId = null;
+
+    function startGame() {
+      words = [];
+      score = 0;
+      lives = 3;
+      totalTyped = 0;
+      startTime = Date.now();
+      isRunning = true;
+      document.getElementById('score').textContent = '0';
+      document.getElementById('lives').textContent = '♥♥♥';
+      document.getElementById('overlay').style.display = 'none';
+      container.querySelectorAll('.word').forEach(el => el.remove());
+      input.value = '';
+      input.focus();
+
+      clearInterval(spawnTimer);
+      spawnTimer = setInterval(spawnWord, 1600);
+      cancelAnimationFrame(loopId);
+      update();
+    }
+
+    function spawnWord() {
+      if (!isRunning) return;
+      const text = WORDS_POOL[Math.floor(Math.random() * WORDS_POOL.length)];
+      const el = document.createElement('div');
+      el.className = 'word';
+      el.textContent = text;
+      const x = Math.floor(Math.random() * (container.clientWidth - 120)) + 10;
+      el.style.left = x + 'px';
+      el.style.top = '0px';
+      container.appendChild(el);
+
+      words.push({
+        text,
+        x,
+        y: 0,
+        speed: 0.8 + Math.random() * 0.5 + Math.min(1.5, score / 300),
+        el
+      });
+    }
+
+    function update() {
+      if (!isRunning) return;
+
+      const elapsedMin = (Date.now() - startTime) / 60000;
+      const wpm = elapsedMin > 0 ? Math.floor((totalTyped / 5) / elapsedMin) : 0;
+      document.getElementById('wpm').textContent = wpm;
+
+      for (let i = words.length - 1; i >= 0; i--) {
+        const w = words[i];
+        w.y += w.speed;
+        w.el.style.top = w.y + 'px';
+
+        // Check if reaches bottom
+        if (w.y >= container.clientHeight - 36) {
+          w.el.remove();
+          words.splice(i, 1);
+          lives--;
+          document.getElementById('lives').textContent = '♥'.repeat(Math.max(0, lives));
+          if (lives <= 0) {
+            endGame();
+            return;
+          }
+        }
+      }
+
+      loopId = requestAnimationFrame(update);
+    }
+
+    function endGame() {
+      isRunning = false;
+      clearInterval(spawnTimer);
+      cancelAnimationFrame(loopId);
+      document.getElementById('overlay').style.display = 'flex';
+      document.getElementById('overlay').innerHTML = `
+        <h2 style="font-size: 26px; color: #ef4444;">GAME OVER</h2>
+        <p style="color: #cbd5e1;">Final Score: ${score}</p>
+        <button class="btn" id="restart-btn">PLAY AGAIN</button>
+      `;
+      document.getElementById('restart-btn').onclick = startGame;
+    }
+
+    input.addEventListener('input', () => {
+      const val = input.value.trim().toLowerCase();
+      let matchedIdx = -1;
+
+      // Find match
+      for (let i = 0; i < words.length; i++) {
+        if (words[i].text === val) {
+          matchedIdx = i;
+          break;
+        }
+      }
+
+      if (matchedIdx !== -1) {
+        const matched = words[matchedIdx];
+        matched.el.remove();
+        words.splice(matchedIdx, 1);
+        score += val.length * 10;
+        totalTyped += val.length;
+        document.getElementById('score').textContent = score;
+        input.value = '';
+      }
+    });
+
+    document.getElementById('start-btn').onclick = startGame;
+  </script>
+</body>
+</html>

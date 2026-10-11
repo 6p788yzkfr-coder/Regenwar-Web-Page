@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Dino Runner</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+    body {
+      background: #0f172a;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 12px;
+    }
+    #game-container {
+      position: relative;
+      border: 2px solid #334155;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #f8fafc;
+    }
+    canvas { display: block; }
+    .hud {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      font-family: monospace;
+      font-size: 16px;
+      font-weight: bold;
+      color: #334155;
+    }
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.7);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    .btn {
+      background: #10b981;
+      color: #064e3b;
+      font-weight: bold;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .tip { margin-top: 10px; font-size: 13px; color: #94a3b8; }
+  </style>
+</head>
+<body>
+  <div id="game-container">
+    <canvas id="canvas" width="560" height="240"></canvas>
+    <div class="hud">
+      HI <span id="hi-score">00000</span> &nbsp; <span id="current-score">00000</span>
+    </div>
+    <div id="overlay" class="overlay" style="display: none;">
+      <h2 id="msg-text" style="font-size: 26px; color: #ef4444;">GAME OVER</h2>
+      <button class="btn" id="restart-btn">RETRY</button>
+    </div>
+  </div>
+
+  <div class="tip">Press [SPACE] or Tap Screen to Jump! Duck with [↓]</div>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    let dino = { x: 40, y: 170, w: 26, h: 36, vy: 0, jump: -10.5, gravity: 0.55, grounded: true };
+    let obstacles = [];
+    let clouds = [{ x: 100, y: 50 }, { x: 340, y: 35 }, { x: 480, y: 65 }];
+    let speed = 5;
+    let score = 0;
+    let hiScore = parseInt(localStorage.getItem('np_dino_hi') || '0', 10);
+    document.getElementById('hi-score').textContent = String(hiScore).padStart(5, '0');
+    let isGameOver = false;
+    let frame = 0;
+
+    function playTone(freq, dur) {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+        osc.start();
+        osc.stop(audioCtx.currentTime + dur);
+      } catch(e){}
+    }
+
+    function jump() {
+      if (isGameOver) {
+        restart();
+        return;
+      }
+      if (dino.grounded) {
+        dino.vy = dino.jump;
+        dino.grounded = false;
+        playTone(380, 0.06);
+      }
+    }
+
+    function restart() {
+      dino.y = 170;
+      dino.vy = 0;
+      dino.grounded = true;
+      obstacles = [];
+      speed = 5;
+      score = 0;
+      frame = 0;
+      isGameOver = false;
+      document.getElementById('overlay').style.display = 'none';
+      loop();
+    }
+
+    function spawnObstacle() {
+      const type = Math.random() < 0.65 ? 'cactus' : 'bird';
+      if (type === 'cactus') {
+        const double = Math.random() < 0.3;
+        obstacles.push({
+          type: 'cactus',
+          x: canvas.width,
+          y: 174,
+          w: double ? 28 : 16,
+          h: 32
+        });
+      } else {
+        obstacles.push({
+          type: 'bird',
+          x: canvas.width,
+          y: 135,
+          w: 24,
+          h: 18
+        });
+      }
+    }
+
+    function update() {
+      if (isGameOver) return;
+      frame++;
+      score += 0.2;
+      speed = 5 + Math.min(6, score / 400);
+
+      document.getElementById('current-score').textContent = String(Math.floor(score)).padStart(5, '0');
+      if (Math.floor(score) > hiScore) {
+        hiScore = Math.floor(score);
+        localStorage.setItem('np_dino_hi', hiScore);
+        document.getElementById('hi-score').textContent = String(hiScore).padStart(5, '0');
+      }
+
+      // Dino physics
+      dino.vy += dino.gravity;
+      dino.y += dino.vy;
+      if (dino.y >= 170) {
+        dino.y = 170;
+        dino.vy = 0;
+        dino.grounded = true;
+      }
+
+      // Obstacles
+      if (frame % Math.floor(Math.max(50, 110 - speed * 4)) === 0) {
+        spawnObstacle();
+      }
+
+      for (let i = obstacles.length - 1; i >= 0; i--) {
+        const o = obstacles[i];
+        o.x -= speed;
+
+        // Collision box
+        if (dino.x + dino.w - 4 > o.x && dino.x + 4 < o.x + o.w &&
+            dino.y + dino.h - 4 > o.y && dino.y + 4 < o.y + o.h) {
+          isGameOver = true;
+          playTone(140, 0.3);
+          document.getElementById('overlay').style.display = 'flex';
+        }
+
+        if (o.x < -40) obstacles.splice(i, 1);
+      }
+
+      // Clouds
+      clouds.forEach(c => {
+        c.x -= 0.6;
+        if (c.x < -50) c.x = canvas.width + 20;
+      });
+    }
+
+    function draw() {
+      // Background
+      ctx.fillStyle = '#f8fafc';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Clouds
+      ctx.fillStyle = '#cbd5e1';
+      clouds.forEach(c => {
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, 14, 0, Math.PI * 2);
+        ctx.arc(c.x + 12, c.y - 4, 16, 0, Math.PI * 2);
+        ctx.arc(c.x + 24, c.y, 14, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // Ground line
+      ctx.strokeStyle = '#475569';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(0, 206);
+      ctx.lineTo(canvas.width, 206);
+      ctx.stroke();
+
+      // Ground pebbles
+      ctx.fillStyle = '#94a3b8';
+      for (let i = 0; i < canvas.width; i += 40) {
+        const ox = (i - (frame * speed) % 40);
+        ctx.fillRect(ox, 212, 3, 2);
+      }
+
+      // Dino
+      ctx.fillStyle = '#1e293b';
+      // Head & body
+      ctx.fillRect(dino.x + 8, dino.y, 18, 16);
+      ctx.fillRect(dino.x, dino.y + 12, 22, 16);
+      // Eye
+      ctx.fillStyle = '#f8fafc';
+      ctx.fillRect(dino.x + 20, dino.y + 4, 3, 3);
+      // Legs
+      ctx.fillStyle = '#1e293b';
+      if (dino.grounded) {
+        const step = Math.floor(frame / 6) % 2;
+        ctx.fillRect(dino.x + 6, dino.y + 28, 4, 8 - (step * 2));
+        ctx.fillRect(dino.x + 14, dino.y + 28, 4, 8 - ((1 - step) * 2));
+      } else {
+        ctx.fillRect(dino.x + 8, dino.y + 28, 4, 6);
+        ctx.fillRect(dino.x + 14, dino.y + 28, 4, 4);
+      }
+
+      // Obstacles
+      obstacles.forEach(o => {
+        if (o.type === 'cactus') {
+          ctx.fillStyle = '#15803d';
+          ctx.fillRect(o.x, o.y, o.w, o.h);
+          ctx.fillRect(o.x - 3, o.y + 6, 4, 10);
+          ctx.fillRect(o.x + o.w - 1, o.y + 10, 4, 10);
+        } else {
+          // Bird
+          ctx.fillStyle = '#b91c1c';
+          ctx.fillRect(o.x, o.y, o.w, o.h);
+          const flap = Math.floor(frame / 8) % 2;
+          ctx.fillRect(o.x + 6, o.y - (flap ? 6 : -4), 10, 4);
+        }
+      });
+    }
+
+    function loop() {
+      update();
+      draw();
+      if (!isGameOver) requestAnimationFrame(loop);
+    }
+
+    window.addEventListener('keydown', e => {
+      if (['Space', 'ArrowUp', 'KeyW'].includes(e.code)) {
+        e.preventDefault();
+        jump();
+      }
+    });
+
+    canvas.addEventListener('pointerdown', e => {
+      e.preventDefault();
+      jump();
+    });
+
+    document.getElementById('restart-btn').onclick = restart;
+
+    loop();
+  </script>
+</body>
+</html>

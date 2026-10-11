@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Connect 4</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+    body {
+      background: #0f172a;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 12px;
+    }
+    .hud {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 420px;
+      margin-bottom: 12px;
+    }
+    .status {
+      font-size: 18px;
+      font-weight: 700;
+      color: #38bdf8;
+    }
+    .btn {
+      background: #334155;
+      color: #fff;
+      border: 1px solid #475569;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .btn:hover { background: #475569; }
+    .board {
+      background: #1e3a8a;
+      padding: 12px;
+      border-radius: 14px;
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      grid-gap: 8px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      border: 3px solid #1d4ed8;
+      max-width: 420px;
+      width: 100%;
+    }
+    .slot {
+      aspect-ratio: 1;
+      background: #0f172a;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      position: relative;
+    }
+    .slot:hover {
+      box-shadow: 0 0 10px rgba(255,255,255,0.2);
+    }
+    .slot.p1 { background: #ef4444; box-shadow: inset 0 -4px 0 #b91c1c; }
+    .slot.p2 { background: #eab308; box-shadow: inset 0 -4px 0 #ca8a04; }
+    .slot.win {
+      animation: pulse 0.7s infinite alternate;
+      border: 3px solid #fff;
+    }
+    @keyframes pulse {
+      from { transform: scale(1); }
+      to { transform: scale(1.08); }
+    }
+    .tip { margin-top: 12px; font-size: 13px; color: #94a3b8; }
+  </style>
+</head>
+<body>
+  <div class="hud">
+    <div id="status" class="status">Your Turn (Red)</div>
+    <div style="display: flex; gap: 6px;">
+      <button class="btn" id="mode-btn">vs AI</button>
+      <button class="btn" id="restart-btn" style="background:#2563eb;">Reset</button>
+    </div>
+  </div>
+
+  <div id="board" class="board"></div>
+
+  <div class="tip">Click any column to drop a piece. Connect 4 to win!</div>
+
+  <script>
+    const ROWS = 6;
+    const COLS = 7;
+    let grid = Array(ROWS).fill(null).map(() => Array(COLS).fill(0));
+    let turn = 1; // 1 = Red, 2 = Yellow
+    let vsAI = true;
+    let gameOver = false;
+    let winCells = [];
+
+    function init() {
+      grid = Array(ROWS).fill(null).map(() => Array(COLS).fill(0));
+      turn = 1;
+      gameOver = false;
+      winCells = [];
+      document.getElementById('status').textContent = 'Your Turn (Red)';
+      document.getElementById('status').style.color = '#ef4444';
+      render();
+    }
+
+    function render() {
+      const boardEl = document.getElementById('board');
+      boardEl.innerHTML = '';
+      for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+          const slot = document.createElement('div');
+          slot.className = 'slot';
+          if (grid[r][c] === 1) slot.classList.add('p1');
+          if (grid[r][c] === 2) slot.classList.add('p2');
+
+          if (winCells.some(w => w.r === r && w.c === c)) {
+            slot.classList.add('win');
+          }
+
+          slot.onclick = () => dropPiece(c);
+          boardEl.appendChild(slot);
+        }
+      }
+    }
+
+    function dropPiece(col) {
+      if (gameOver) return;
+
+      // Find lowest empty slot
+      let targetRow = -1;
+      for (let r = ROWS - 1; r >= 0; r--) {
+        if (grid[r][col] === 0) {
+          targetRow = r;
+          break;
+        }
+      }
+
+      if (targetRow === -1) return; // Column full
+
+      grid[targetRow][col] = turn;
+      render();
+
+      if (checkWin(targetRow, col, turn)) {
+        gameOver = true;
+        const winner = turn === 1 ? 'Red Wins!' : (vsAI ? 'AI Wins!' : 'Yellow Wins!');
+        document.getElementById('status').textContent = winner;
+        document.getElementById('status').style.color = turn === 1 ? '#ef4444' : '#eab308';
+        render();
+        return;
+      }
+
+      if (grid.every(row => row.every(cell => cell !== 0))) {
+        gameOver = true;
+        document.getElementById('status').textContent = "It's a Draw!";
+        document.getElementById('status').style.color = '#cbd5e1';
+        return;
+      }
+
+      turn = turn === 1 ? 2 : 1;
+      if (turn === 1) {
+        document.getElementById('status').textContent = 'Your Turn (Red)';
+        document.getElementById('status').style.color = '#ef4444';
+      } else {
+        document.getElementById('status').textContent = vsAI ? 'AI Thinking...' : "Yellow's Turn";
+        document.getElementById('status').style.color = '#eab308';
+        if (vsAI) {
+          setTimeout(aiMove, 300);
+        }
+      }
+    }
+
+    function aiMove() {
+      if (gameOver || turn !== 2) return;
+
+      // Check if AI can win
+      for (let c = 0; c < COLS; c++) {
+        let r = getLowestEmpty(c);
+        if (r !== -1) {
+          grid[r][c] = 2;
+          if (hasFour(r, c, 2)) {
+            grid[r][c] = 0;
+            return dropPiece(c);
+          }
+          grid[r][c] = 0;
+        }
+      }
+
+      // Block player win
+      for (let c = 0; c < COLS; c++) {
+        let r = getLowestEmpty(c);
+        if (r !== -1) {
+          grid[r][c] = 1;
+          if (hasFour(r, c, 1)) {
+            grid[r][c] = 0;
+            return dropPiece(c);
+          }
+          grid[r][c] = 0;
+        }
+      }
+
+      // Center preference
+      const preferred = [3, 2, 4, 1, 5, 0, 6];
+      for (let c of preferred) {
+        if (getLowestEmpty(c) !== -1) {
+          return dropPiece(c);
+        }
+      }
+    }
+
+    function getLowestEmpty(col) {
+      for (let r = ROWS - 1; r >= 0; r--) {
+        if (grid[r][col] === 0) return r;
+      }
+      return -1;
+    }
+
+    function hasFour(r, c, player) {
+      const dirs = [[0,1],[1,0],[1,1],[1,-1]];
+      for (let [dr, dc] of dirs) {
+        let count = 1;
+        for (let s = 1; s < 4; s++) {
+          const nr = r + dr*s, nc = c + dc*s;
+          if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS && grid[nr][nc] === player) count++;
+          else break;
+        }
+        for (let s = 1; s < 4; s++) {
+          const nr = r - dr*s, nc = c - dc*s;
+          if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS && grid[nr][nc] === player) count++;
+          else break;
+        }
+        if (count >= 4) return true;
+      }
+      return false;
+    }
+
+    function checkWin(r, c, player) {
+      const dirs = [[0,1],[1,0],[1,1],[1,-1]];
+      for (let [dr, dc] of dirs) {
+        let matched = [{ r, c }];
+        for (let s = 1; s < 4; s++) {
+          const nr = r + dr*s, nc = c + dc*s;
+          if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS && grid[nr][nc] === player) matched.push({ r: nr, c: nc });
+          else break;
+        }
+        for (let s = 1; s < 4; s++) {
+          const nr = r - dr*s, nc = c - dc*s;
+          if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS && grid[nr][nc] === player) matched.push({ r: nr, c: nc });
+          else break;
+        }
+        if (matched.length >= 4) {
+          winCells = matched;
+          return true;
+        }
+      }
+      return false;
+    }
+
+    document.getElementById('restart-btn').onclick = init;
+    document.getElementById('mode-btn').onclick = () => {
+      vsAI = !vsAI;
+      document.getElementById('mode-btn').textContent = vsAI ? 'vs AI' : 'vs 2P Local';
+      init();
+    };
+
+    init();
+  </script>
+</body>
+</html>

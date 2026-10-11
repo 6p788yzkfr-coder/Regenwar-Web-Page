@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Cookie Clicker</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+    body {
+      background: #0f172a;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 12px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      width: 100%;
+      max-width: 600px;
+      background: #1e293b;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #334155;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    @media(max-width: 520px) {
+      .container { grid-template-columns: 1fr; }
+    }
+    .cookie-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 12px;
+    }
+    .counter {
+      font-size: 28px;
+      font-weight: 800;
+      color: #f59e0b;
+      font-family: monospace;
+    }
+    .cps {
+      font-size: 13px;
+      color: #94a3b8;
+      margin-bottom: 16px;
+    }
+    .cookie-btn {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #d97706, #92400e);
+      border: 4px solid #b45309;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(245, 158, 11, 0.3);
+      position: relative;
+      transition: transform 0.08s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 72px;
+    }
+    .cookie-btn:active {
+      transform: scale(0.92);
+    }
+    .shop-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 380px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .shop-title {
+      font-size: 14px;
+      text-transform: uppercase;
+      font-weight: bold;
+      color: #cbd5e1;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 4px;
+      margin-bottom: 4px;
+    }
+    .building-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #0f172a;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid #334155;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .building-item:hover { background: #1a243b; }
+    .building-item.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .building-name { font-size: 13px; font-weight: 600; color: #f1f5f9; }
+    .building-cost { font-size: 11px; color: #f59e0b; font-weight: bold; }
+    .building-count { font-size: 16px; font-weight: bold; color: #38bdf8; }
+    .float-text {
+      position: absolute;
+      color: #fef08a;
+      font-weight: bold;
+      pointer-events: none;
+      animation: floatUp 0.7s forwards ease-out;
+      font-size: 18px;
+      text-shadow: 1px 1px 2px #000;
+    }
+    @keyframes floatUp {
+      0% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-40px); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="cookie-section">
+      <div id="cookies-count" class="counter">0</div>
+      <div id="cps-count" class="cps">per second: 0.0</div>
+      <div id="cookie" class="cookie-btn">🍪</div>
+      <div style="margin-top: 16px; font-size: 12px; color: #64748b;">Click to bake cookies!</div>
+    </div>
+
+    <div class="shop-section">
+      <div class="shop-title">Bakery Upgrades</div>
+      <div id="shop-list"></div>
+    </div>
+  </div>
+
+  <script>
+    let cookies = parseFloat(localStorage.getItem('np_cc_cookies') || '0');
+    let items = [
+      { id: 'cursor', name: 'Auto-Clicker 👆', cost: 15, cps: 0.5, count: 0 },
+      { id: 'grandma', name: 'Grandma 👵', cost: 100, cps: 4, count: 0 },
+      { id: 'farm', name: 'Cookie Farm 🌾', cost: 1100, cps: 32, count: 0 },
+      { id: 'mine', name: 'Cookie Mine ⛏️', cost: 12000, cps: 260, count: 0 },
+      { id: 'factory', name: 'Factory 🏭', cost: 130000, cps: 1400, count: 0 },
+      { id: 'portal', name: 'Cookie Portal 🌀', cost: 1400000, cps: 7800, count: 0 }
+    ];
+
+    // Load counts
+    items.forEach(it => {
+      const saved = localStorage.getItem('np_cc_' + it.id);
+      if (saved) {
+        it.count = parseInt(saved, 10);
+        it.cost = Math.floor(it.cost * Math.pow(1.15, it.count));
+      }
+    });
+
+    function getCPS() {
+      return items.reduce((sum, it) => sum + it.count * it.cps, 0);
+    }
+
+    function updateDisplay() {
+      document.getElementById('cookies-count').textContent = Math.floor(cookies).toLocaleString();
+      document.getElementById('cps-count').textContent = `per second: ${getCPS().toFixed(1)}`;
+      renderShop();
+    }
+
+    function renderShop() {
+      const shopEl = document.getElementById('shop-list');
+      shopEl.innerHTML = '';
+      items.forEach((it, idx) => {
+        const div = document.createElement('div');
+        div.className = 'building-item' + (cookies < it.cost ? ' disabled' : '');
+        div.innerHTML = `
+          <div>
+            <div class="building-name">${it.name}</div>
+            <div class="building-cost">🪙 ${it.cost.toLocaleString()} · (+${it.cps}/s)</div>
+          </div>
+          <div class="building-count">${it.count}</div>
+        `;
+        div.onclick = () => buyItem(idx);
+        shopEl.appendChild(div);
+      });
+    }
+
+    function buyItem(idx) {
+      const it = items[idx];
+      if (cookies >= it.cost) {
+        cookies -= it.cost;
+        it.count++;
+        it.cost = Math.floor(it.cost * 1.15);
+        localStorage.setItem('np_cc_' + it.id, it.count);
+        localStorage.setItem('np_cc_cookies', cookies);
+        updateDisplay();
+      }
+    }
+
+    const cookieBtn = document.getElementById('cookie');
+    cookieBtn.onclick = (e) => {
+      cookies += 1;
+      updateDisplay();
+
+      // Float number
+      const floatEl = document.createElement('div');
+      floatEl.className = 'float-text';
+      floatEl.textContent = '+1';
+      const rect = cookieBtn.getBoundingClientRect();
+      floatEl.style.left = (e.clientX || rect.left + 50) + 'px';
+      floatEl.style.top = (e.clientY || rect.top + 50) + 'px';
+      document.body.appendChild(floatEl);
+      setTimeout(() => floatEl.remove(), 700);
+    };
+
+    // Game loop 10 times per sec
+    setInterval(() => {
+      const added = getCPS() / 10;
+      if (added > 0) {
+        cookies += added;
+        updateDisplay();
+      }
+    }, 100);
+
+    // Save interval
+    setInterval(() => {
+      localStorage.setItem('np_cc_cookies', cookies);
+    }, 5000);
+
+    updateDisplay();
+  </script>
+</body>
+</html>
