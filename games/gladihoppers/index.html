@@ -116,10 +116,10 @@
     }
   </style>
 
-  <!-- High-Speed Zero-Latency PokiSDK Stub: completely eliminates external network calls & Securly blocks -->
+  <!-- Complete Proxy-backed PokiSDK Stub ensuring zero TypeErrors and zero external network calls -->
   <script>
     (function() {
-      window.PokiSDK = {
+      const baseSDK = {
         init: function() { return Promise.resolve(); },
         initWithVideoHB: function() { return Promise.resolve(); },
         customEvent: function() {},
@@ -151,6 +151,13 @@
         setDebug: function() {},
         captureError: function() {}
       };
+
+      window.PokiSDK = new Proxy(baseSDK, {
+        get: function(target, prop) {
+          if (prop in target) return target[prop];
+          return function() { return Promise.resolve(); };
+        }
+      });
     })();
   </script>
 </head>
@@ -172,7 +179,7 @@
 
   <div id="gameContainer"></div>
 
-  <!-- Local Standalone Unity 2019 WebGL Loader with zero CDN dependence -->
+  <!-- Local Standalone Unity 2019 WebGL Loader with patched UnityModule binding -->
   <script src="Build/UnityLoader.js"></script>
   <script>
     (function() {
@@ -187,7 +194,7 @@
         if (percent >= 100) {
           setTimeout(function() {
             if (overlay) overlay.classList.add('hidden');
-          }, 350);
+          }, 400);
         }
       }
 
@@ -198,7 +205,6 @@
           }
         });
 
-        // Ensure canvas grabs keyboard focus cleanly
         window.addEventListener('click', function() {
           const canvas = document.querySelector('#gameContainer canvas');
           if (canvas) canvas.focus();

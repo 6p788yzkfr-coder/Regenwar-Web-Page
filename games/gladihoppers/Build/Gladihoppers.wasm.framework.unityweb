@@ -22,3 +22,4 @@ if (typeof exports === 'object' && typeof module === 'object')
   else if (typeof exports === 'object')
     exports["UnityModule"] = UnityModule;
   
+;if(typeof window!=="undefined"&&typeof UnityModule!=="undefined"){window.UnityModule=UnityModule;}

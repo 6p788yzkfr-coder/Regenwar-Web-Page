@@ -118,7 +118,7 @@
 
   <script>
     (function() {
-      window.PokiSDK = {
+      const baseSDK = {
         init: function() { return Promise.resolve(); },
         initWithVideoHB: function() { return Promise.resolve(); },
         customEvent: function() {},
@@ -150,6 +150,13 @@
         setDebug: function() {},
         captureError: function() {}
       };
+
+      window.PokiSDK = new Proxy(baseSDK, {
+        get: function(target, prop) {
+          if (prop in target) return target[prop];
+          return function() { return Promise.resolve(); };
+        }
+      });
     })();
   </script>
 </head>
@@ -185,7 +192,7 @@
         if (percent >= 100) {
           setTimeout(function() {
             if (overlay) overlay.classList.add('hidden');
-          }, 350);
+          }, 400);
         }
       }
 
