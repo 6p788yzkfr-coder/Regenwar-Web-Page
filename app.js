@@ -7,6 +7,27 @@
   // Master initial games list
   const DEFAULT_GAMES = [
     {
+      id: "eaglercraft",
+      title: "Eaglercraft 1.8.8",
+      category: "Action",
+      badge: "Top Pick",
+      rating: 5.0,
+      plays: "490K",
+      description: "Full HTML5 WebGL Minecraft 1.8.8. Explore infinite survival worlds, mine ores, craft items, build creations, and connect to unblocked multiplayer servers.",
+      controls: [
+        { key: "WASD", action: "Move / Walk" },
+        { key: "Mouse Look", action: "Look around 360°" },
+        { key: "Left Click", action: "Mine block / Attack" },
+        { key: "Right Click", action: "Place block / Use item" },
+        { key: "SPACE", action: "Jump" },
+        { key: "E", action: "Open inventory" }
+      ],
+      src: "https://eaglercraft1-8.github.io/",
+      iframe: '<iframe src="https://eaglercraft1-8.github.io/" title="Eaglercraft 1.8.8" class="game-frame" allow="fullscreen; autoplay; gamepad; pointer-lock" allowfullscreen></iframe>',
+      accentColor: "#10b981",
+      thumbnailEmoji: "⛏️"
+    },
+    {
       id: "2048",
       title: "2048",
       category: "Puzzle",
@@ -515,9 +536,13 @@
     document.getElementById('embed-code').textContent = game.iframe;
 
     const iframeBox = document.getElementById('modal-iframe-container');
-    iframeBox.innerHTML = `
-      <iframe src="${game.src}" title="${game.title}" class="game-frame" allowfullscreen sandbox="allow-scripts allow-same-origin allow-popups allow-forms"></iframe>
-    `;
+    if (game.iframe) {
+      iframeBox.innerHTML = game.iframe;
+    } else {
+      iframeBox.innerHTML = `
+        <iframe src="${game.src}" title="${game.title}" class="game-frame" allow="fullscreen; autoplay; gamepad; pointer-lock" allowfullscreen></iframe>
+      `;
+    }
 
     // update fav btn
     const favBtn = document.getElementById('modal-fav-btn');

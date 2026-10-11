@@ -1,5 +1,44 @@
 [
   {
+    "id": "eaglercraft",
+    "title": "Eaglercraft 1.8.8",
+    "category": "Action",
+    "badge": "Top Pick",
+    "rating": 5,
+    "plays": "490K",
+    "description": "Full HTML5 WebGL Minecraft 1.8.8. Explore infinite survival worlds, mine ores, craft items, build creations, and connect to unblocked multiplayer servers.",
+    "controls": [
+      {
+        "key": "WASD",
+        "action": "Move / Walk"
+      },
+      {
+        "key": "Mouse Look",
+        "action": "Look around 360°"
+      },
+      {
+        "key": "Left Click",
+        "action": "Mine block / Attack"
+      },
+      {
+        "key": "Right Click",
+        "action": "Place block / Use item"
+      },
+      {
+        "key": "SPACE",
+        "action": "Jump"
+      },
+      {
+        "key": "E",
+        "action": "Open inventory"
+      }
+    ],
+    "src": "https://eaglercraft1-8.github.io/",
+    "iframe": "<iframe src=\"https://eaglercraft1-8.github.io/\" title=\"Eaglercraft 1.8.8\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allow=\"fullscreen; autoplay; gamepad; pointer-lock\" allowfullscreen></iframe>",
+    "accentColor": "#10b981",
+    "thumbnailEmoji": "⛏️"
+  },
+  {
     "id": "2048",
     "title": "2048",
     "category": "Puzzle",
@@ -8,8 +47,14 @@
     "plays": "184K",
     "description": "Slide matching numbered tiles across the 4x4 grid to merge them up to the legendary 2048 tile.",
     "controls": [
-      { "key": "Arrow Keys / WASD", "action": "Slide all tiles" },
-      { "key": "Swipe", "action": "Slide on mobile / touch screen" }
+      {
+        "key": "Arrow Keys / WASD",
+        "action": "Slide all tiles"
+      },
+      {
+        "key": "Swipe",
+        "action": "Slide on mobile / touch screen"
+      }
     ],
     "src": "./games/2048.html",
     "iframe": "<iframe src=\"./games/2048.html\" title=\"2048\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
@@ -25,8 +70,14 @@
     "plays": "142K",
     "description": "Guide the slithering serpent to eat glowing energy orbs, grow longer, and avoid crashing into walls or your own tail.",
     "controls": [
-      { "key": "Arrow Keys / WASD", "action": "Steer snake direction" },
-      { "key": "On-screen D-Pad", "action": "Touch navigation" }
+      {
+        "key": "Arrow Keys / WASD",
+        "action": "Steer snake direction"
+      },
+      {
+        "key": "On-screen D-Pad",
+        "action": "Touch navigation"
+      }
     ],
     "src": "./games/snake.html",
     "iframe": "<iframe src=\"./games/snake.html\" title=\"Retro Snake\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
@@ -42,10 +93,22 @@
     "plays": "220K",
     "description": "Rotate and maneuver falling tetrominoes into horizontal lines to clear rows and score high multipliers.",
     "controls": [
-      { "key": "← / →", "action": "Move piece left / right" },
-      { "key": "↑ / W", "action": "Rotate piece clockwise" },
-      { "key": "↓ / S", "action": "Soft drop" },
-      { "key": "SPACE", "action": "Instant hard drop" }
+      {
+        "key": "← / →",
+        "action": "Move piece left / right"
+      },
+      {
+        "key": "↑ / W",
+        "action": "Rotate piece clockwise"
+      },
+      {
+        "key": "↓ / S",
+        "action": "Soft drop"
+      },
+      {
+        "key": "SPACE",
+        "action": "Instant hard drop"
+      }
     ],
     "src": "./games/tetris.html",
     "iframe": "<iframe src=\"./games/tetris.html\" title=\"Tetris Block Master\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
@@ -61,7 +124,10 @@
     "plays": "195K",
     "description": "Tap or press Space to keep your bird airborne and navigate through narrow green pipe obstacles.",
     "controls": [
-      { "key": "SPACE / Tap", "action": "Flap wings & rise" }
+      {
+        "key": "SPACE / Tap",
+        "action": "Flap wings & rise"
+      }
     ],
     "src": "./games/flappy-bird.html",
     "iframe": "<iframe src=\"./games/flappy-bird.html\" title=\"Flappy Wing\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
@@ -77,8 +143,14 @@
     "plays": "130K",
     "description": "Defend planet Earth from descending waves of alien invaders using your laser cannon and bunker defenses.",
     "controls": [
-      { "key": "← / → (A / D)", "action": "Move defense cannon" },
-      { "key": "SPACE / Button", "action": "Fire laser blast" }
+      {
+        "key": "← / → (A / D)",
+        "action": "Move defense cannon"
+      },
+      {
+        "key": "SPACE / Button",
+        "action": "Fire laser blast"
+      }
     ],
     "src": "./games/space-invaders.html",
     "iframe": "<iframe src=\"./games/space-invaders.html\" title=\"Space Invaders\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
@@ -94,9 +166,18 @@
     "plays": "98K",
     "description": "The grandfather of video gaming! Defeat the AI computer opponent or battle a friend in local head-to-head mode.",
     "controls": [
-      { "key": "Mouse / Touch", "action": "Player 1 paddle control" },
-      { "key": "W / S (Player 1)", "action": "Keyboard movement" },
-      { "key": "I / K (Player 2)", "action": "Second player movement" }
+      {
+        "key": "Mouse / Touch",
+        "action": "Player 1 paddle control"
+      },
+      {
+        "key": "W / S (Player 1)",
+        "action": "Keyboard movement"
+      },
+      {
+        "key": "I / K (Player 2)",
+        "action": "Second player movement"
+      }
     ],
     "src": "./games/pong.html",
     "iframe": "<iframe src=\"./games/pong.html\" title=\"Pong Classic 1972\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
@@ -112,8 +193,14 @@
     "plays": "115K",
     "description": "Bounce the steel sphere off your paddle to smash through rows of colored bricks without losing your ball.",
     "controls": [
-      { "key": "Mouse / Touch", "action": "Move paddle horizontally" },
-      { "key": "← / →", "action": "Keyboard paddle steering" }
+      {
+        "key": "Mouse / Touch",
+        "action": "Move paddle horizontally"
+      },
+      {
+        "key": "← / →",
+        "action": "Keyboard paddle steering"
+      }
     ],
     "src": "./games/breakout.html",
     "iframe": "<iframe src=\"./games/breakout.html\" title=\"Breakout Smash\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
@@ -129,8 +216,14 @@
     "plays": "310K",
     "description": "The beloved offline browser runner. Sprint through the desert, leaping over cacti and ducking under pterodactyls.",
     "controls": [
-      { "key": "SPACE / ↑", "action": "Jump over obstacles" },
-      { "key": "↓", "action": "Duck under flying birds" }
+      {
+        "key": "SPACE / ↑",
+        "action": "Jump over obstacles"
+      },
+      {
+        "key": "↓",
+        "action": "Duck under flying birds"
+      }
     ],
     "src": "./games/dino-run.html",
     "iframe": "<iframe src=\"./games/dino-run.html\" title=\"T-Rex Dino Runner\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
@@ -146,8 +239,14 @@
     "plays": "165K",
     "description": "Uncover grid cells without triggering hidden explosive mines using numerical clues and strategic flagging.",
     "controls": [
-      { "key": "Left Click", "action": "Reveal safe cell" },
-      { "key": "Right Click / Mode", "action": "Place or remove caution flag" }
+      {
+        "key": "Left Click",
+        "action": "Reveal safe cell"
+      },
+      {
+        "key": "Right Click / Mode",
+        "action": "Place or remove caution flag"
+      }
     ],
     "src": "./games/minesweeper.html",
     "iframe": "<iframe src=\"./games/minesweeper.html\" title=\"Minesweeper Pro\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
@@ -163,8 +262,14 @@
     "plays": "270K",
     "description": "Click the giant cookie, hire grandmas, construct cookie farms, and amass trillions of delicious baked goods.",
     "controls": [
-      { "key": "Mouse Click / Tap", "action": "Bake cookies" },
-      { "key": "Shop Menu", "action": "Purchase automated bakery gear" }
+      {
+        "key": "Mouse Click / Tap",
+        "action": "Bake cookies"
+      },
+      {
+        "key": "Shop Menu",
+        "action": "Purchase automated bakery gear"
+      }
     ],
     "src": "./games/cookie-clicker.html",
     "iframe": "<iframe src=\"./games/cookie-clicker.html\" title=\"Cookie Empire\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
@@ -180,8 +285,14 @@
     "plays": "88K",
     "description": "Drop colored discs into the vertical grid. Form an unbroken line of four chips horizontally, vertically, or diagonally.",
     "controls": [
-      { "key": "Click Column", "action": "Drop disc into column" },
-      { "key": "Mode Toggle", "action": "Switch between AI and 2-Player local" }
+      {
+        "key": "Click Column",
+        "action": "Drop disc into column"
+      },
+      {
+        "key": "Mode Toggle",
+        "action": "Switch between AI and 2-Player local"
+      }
     ],
     "src": "./games/connect4.html",
     "iframe": "<iframe src=\"./games/connect4.html\" title=\"Connect Four Battle\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
@@ -197,9 +308,18 @@
     "plays": "104K",
     "description": "Pilot your triangular spaceship through dangerous deep space, blasting massive tumbling space rocks into pieces.",
     "controls": [
-      { "key": "← / →", "action": "Rotate ship" },
-      { "key": "↑ / W", "action": "Engage thruster propulsion" },
-      { "key": "SPACE", "action": "Fire photon torpedo" }
+      {
+        "key": "← / →",
+        "action": "Rotate ship"
+      },
+      {
+        "key": "↑ / W",
+        "action": "Engage thruster propulsion"
+      },
+      {
+        "key": "SPACE",
+        "action": "Fire photon torpedo"
+      }
     ],
     "src": "./games/asteroids.html",
     "iframe": "<iframe src=\"./games/asteroids.html\" title=\"Asteroids 1979\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
@@ -215,8 +335,14 @@
     "plays": "92K",
     "description": "Test your keyboard reflexes! Type falling words before they hit the lower border to maintain your streak and WPM.",
     "controls": [
-      { "key": "Keyboard Typing", "action": "Type matching word" },
-      { "key": "ENTER", "action": "Confirm typed word" }
+      {
+        "key": "Keyboard Typing",
+        "action": "Type matching word"
+      },
+      {
+        "key": "ENTER",
+        "action": "Confirm typed word"
+      }
     ],
     "src": "./games/speed-typing.html",
     "iframe": "<iframe src=\"./games/speed-typing.html\" title=\"Speed Typer\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
@@ -232,7 +358,10 @@
     "plays": "120K",
     "description": "Play classic X's and O's against an unbeatable algorithmic AI or face off in 2-player local tabletop mode.",
     "controls": [
-      { "key": "Click Grid Cell", "action": "Place X or O marker" }
+      {
+        "key": "Click Grid Cell",
+        "action": "Place X or O marker"
+      }
     ],
     "src": "./games/tic-tac-toe.html",
     "iframe": "<iframe src=\"./games/tic-tac-toe.html\" title=\"Tic Tac Toe Master\" class=\"w-full h-full border-0 rounded-lg shadow-inner\" allowfullscreen sandbox=\"allow-scripts allow-same-origin allow-popups\"></iframe>",
