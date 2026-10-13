@@ -59,8 +59,8 @@
         { key: "SPACE", action: "Switch stance / Jump" },
         { key: "E", action: "Throw javelin" }
       ],
-      src: "./games/gladihoppers.html",
-      iframe: '<iframe src="./games/gladihoppers.html" title="Gladihoppers" class="game-frame" allow="fullscreen; autoplay; gamepad"></iframe>',
+      src: "./games/gladihoppers/index.html",
+      iframe: '<iframe src="./games/gladihoppers/index.html" title="Gladihoppers" class="game-frame" allow="fullscreen; autoplay; gamepad"></iframe>',
       accentColor: "#ef4444",
       thumbnailEmoji: "⚔️"
     },
@@ -78,8 +78,8 @@
         { key: "I / O (P2)", action: "Player 2 Jump Left / Right" },
         { key: "P (P2)", action: "Player 2 Shoot" }
       ],
-      src: "./games/getaway-shootout.html",
-      iframe: '<iframe src="./games/getaway-shootout.html" title="Getaway Shootout" class="game-frame" allow="fullscreen; autoplay; gamepad"></iframe>',
+      src: "./games/getaway-shootout/index.html",
+      iframe: '<iframe src="./games/getaway-shootout/index.html" title="Getaway Shootout" class="game-frame" allow="fullscreen; autoplay; gamepad"></iframe>',
       accentColor: "#f59e0b",
       thumbnailEmoji: "🚁"
     },
@@ -335,9 +335,182 @@
   let activeGame = null;
   let isCloaked = false;
   let originalTitle = document.title;
+  let isSchoolMode = true;
+
+  try {
+    const saved = localStorage.getItem('novaplay_school_mode');
+    isSchoolMode = saved !== null ? saved === 'true' : true;
+  } catch(e) {
+    isSchoolMode = true;
+  }
+
+  function setSchoolMode(enabled) {
+    isSchoolMode = enabled;
+    try {
+      localStorage.setItem('novaplay_school_mode', isSchoolMode ? 'true' : 'false');
+    } catch(e) {}
+    document.body.classList.toggle('school-mode', isSchoolMode);
+
+    const label = document.getElementById('school-mode-label');
+    if (label) {
+      label.textContent = isSchoolMode ? 'School WiFi: ON' : 'Turbo Mode: OFF';
+    }
+
+    const netText = document.getElementById('network-status-text');
+    if (netText) {
+      netText.innerHTML = isSchoolMode 
+        ? '<strong>School WiFi Optimizer:</strong> Turbo Active (Fast Cache)' 
+        : '<strong>Standard Mode:</strong> Heavy Preload Allowed';
+    }
+  }
+
+  // Asset preloading cache (Strictly disabled in School WiFi mode to prevent network congestion)
+  const preloadedUrls = new Set();
+  function preloadUrl(url) {
+    if (isSchoolMode) return; // Zero network hogging in School WiFi mode
+    if (!url || preloadedUrls.has(url)) return;
+    preloadedUrls.add(url);
+    const link = document.createElement('link');
+    link.rel = 'prefetch';
+    link.href = url;
+    document.head.appendChild(link);
+  }
+
+  function preloadGameEngines() {
+    if (isSchoolMode) return; // Do not fetch heavy 3D wasm engines in background on school wifi
+    const idle = window.requestIdleCallback || ((cb) => setTimeout(cb, 2000));
+    idle(() => {
+      [
+        './games/gladihoppers/index.html',
+        './games/gladihoppers/Build/UnityLoader.js',
+        './games/gladihoppers/Build/Gladihoppers.json',
+        './games/getaway-shootout/index.html',
+        './games/getaway-shootout/Build/UnityLoader.js',
+        './games/getaway-shootout/GetawayShootout.json'
+      ].forEach(u => preloadUrl(u));
+    });
+  }
+
+  const OFFLINE_GAMES_LIST = [
+    './games/2048.html',
+    './games/snake.html',
+    './games/tetris.html',
+    './games/flappy-bird.html',
+    './games/pong.html',
+    './games/breakout.html',
+    './games/dino-run.html',
+    './games/space-invaders.html',
+    './games/asteroids.html',
+    './games/minesweeper.html',
+    './games/speed-typing.html',
+    './games/tic-tac-toe.html',
+    './games/connect4.html',
+    './games/cookie-clicker.html'
+  ];
+
+  async function cacheAllGames() {
+    const btn = document.getElementById('cache-all-btn');
+    const statusEl = document.getElementById('cache-status-text');
+    if (btn) btn.textContent = '⏳ Saving games...';
+
+    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+      navigator.serviceWorker.controller.postMessage({ type: 'CACHE_ALL_GAMES' });
+      return;
+    }
+
+    if ('caches' in window) {
+      try {
+        const cache = await caches.open('novaplay-cache-v2');
+        let count = 0;
+        for (const url of OFFLINE_GAMES_LIST) {
+          await cache.add(url).catch(() => {});
+          count++;
+          if (statusEl) statusEl.textContent = `Saving: ${count}/${OFFLINE_GAMES_LIST.length}...`;
+        }
+        if (statusEl) statusEl.textContent = `All ${OFFLINE_GAMES_LIST.length} Games Saved Offline! ⚡`;
+        if (btn) {
+          btn.textContent = '✅ All Saved';
+          btn.disabled = true;
+        }
+      } catch (e) {
+        if (statusEl) statusEl.textContent = 'Cache ready!';
+        if (btn) btn.textContent = '✅ Saved';
+      }
+    }
+  }
+
+  function testPing() {
+    const pingEl = document.getElementById('ping-text');
+    const dotEl = document.getElementById('status-dot');
+    if (pingEl) pingEl.textContent = '⏱️ Testing...';
+
+    const start = performance.now();
+    fetch('./favicon.svg?t=' + Date.now(), { cache: 'no-store' })
+      .then((res) => {
+        const duration = Math.round(performance.now() - start);
+        if (pingEl) {
+          if (duration < 80) {
+            pingEl.innerHTML = `🟢 <strong>${duration}ms</strong> (Fast WiFi)`;
+            if (dotEl) { dotEl.className = 'status-dot'; }
+          } else if (duration < 250) {
+            pingEl.innerHTML = `🟡 <strong>${duration}ms</strong> (School WiFi)`;
+            if (dotEl) { dotEl.className = 'status-dot slow'; }
+          } else {
+            pingEl.innerHTML = `🔴 <strong>${duration}ms</strong> (High Latency)`;
+            if (dotEl) { dotEl.className = 'status-dot slow'; }
+          }
+        }
+      })
+      .catch(() => {
+        if (pingEl) pingEl.innerHTML = `⚪ <strong>Offline</strong> (Local Cache Active)`;
+        if (dotEl) { dotEl.className = 'status-dot offline'; }
+      });
+  }
+
+  function registerServiceWorker() {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js', { scope: './' })
+        .then((reg) => {
+          navigator.serviceWorker.addEventListener('message', (event) => {
+            if (!event.data) return;
+            if (event.data.type === 'CACHE_PROGRESS') {
+              const cacheStatusEl = document.getElementById('cache-status-text');
+              if (cacheStatusEl) {
+                cacheStatusEl.textContent = `Saving: ${event.data.cached}/${event.data.total} games...`;
+              }
+            } else if (event.data.type === 'CACHE_COMPLETE') {
+              const cacheStatusEl = document.getElementById('cache-status-text');
+              if (cacheStatusEl) {
+                cacheStatusEl.textContent = `All ${event.data.total} Games Saved Offline! ⚡`;
+              }
+              const cacheBtn = document.getElementById('cache-all-btn');
+              if (cacheBtn) {
+                cacheBtn.textContent = '✅ All Games Saved';
+                cacheBtn.disabled = true;
+              }
+            } else if (event.data.type === 'CACHE_STATUS_RESULT') {
+              const cacheStatusEl = document.getElementById('cache-status-text');
+              if (cacheStatusEl && event.data.cached > 0) {
+                cacheStatusEl.textContent = `${event.data.cached}/${event.data.total} Offline Games Ready`;
+              }
+            }
+          });
+
+          setTimeout(() => {
+            if (navigator.serviceWorker.controller) {
+              navigator.serviceWorker.controller.postMessage({ type: 'GET_CACHE_STATUS' });
+            }
+          }, 1000);
+        })
+        .catch((err) => {
+          console.warn('[PWA] ServiceWorker registration:', err);
+        });
+    }
+  }
 
   // Initialize
   function init() {
+    setSchoolMode(isSchoolMode);
     loadStoredData();
     renderHeader();
     renderRecents();
@@ -345,6 +518,9 @@
     renderGames();
     bindEvents();
     loadRemoteJson();
+    preloadGameEngines();
+    registerServiceWorker();
+    testPing();
   }
 
   function loadStoredData() {
@@ -549,6 +725,7 @@
         </div>
       `;
 
+      // Zero automatic prefetching on hover to protect limited school bandwidth
       card.onclick = (e) => {
         if (e.target.closest('.card-fav-btn')) {
           e.stopPropagation();
@@ -573,6 +750,7 @@
     renderGames();
   }
 
+  let iframeLoadTimer = null;
   function launchGame(game) {
     activeGame = game;
     // update recent
@@ -591,17 +769,42 @@
     document.getElementById('modal-id').textContent = game.id;
     document.getElementById('embed-code').textContent = game.iframe;
 
-    const iframeBox = document.getElementById('modal-iframe-container');
-    if (game.iframe) {
-      let cleanFrame = game.iframe;
-      if (cleanFrame.includes('allow=')) {
-        cleanFrame = cleanFrame.replace(/\s+allowfullscreen(?=[\s>])/gi, '');
-      }
-      iframeBox.innerHTML = cleanFrame;
+    // Show loading overlay for immediate visual feedback on slow school WiFi
+    const overlay = document.getElementById('game-loading-overlay');
+    const loadTitle = document.getElementById('game-loading-title');
+    const loadSub = document.getElementById('game-loading-sub');
+    if (overlay) {
+      overlay.style.display = 'flex';
+      if (loadTitle) loadTitle.textContent = `Starting ${game.title}...`;
+      if (loadSub) loadSub.textContent = isSchoolMode ? 'Launching via School WiFi Fast Cache...' : 'Connecting to game...';
+    }
+
+    const innerBox = document.getElementById('modal-iframe-inner') || document.getElementById('modal-iframe-container');
+    let cleanFrame = game.iframe;
+    if (!cleanFrame) {
+      cleanFrame = `<iframe src="${game.src}" title="${game.title}" class="game-frame" allow="fullscreen; autoplay; gamepad; pointer-lock"></iframe>`;
+    }
+    if (cleanFrame.includes('allow=')) {
+      cleanFrame = cleanFrame.replace(/\s+allowfullscreen(?=[\s>])/gi, '');
+    }
+
+    innerBox.innerHTML = cleanFrame;
+
+    const iframe = innerBox.querySelector('iframe');
+    if (iframe) {
+      iframe.onload = () => {
+        if (iframeLoadTimer) clearTimeout(iframeLoadTimer);
+        if (overlay) overlay.style.display = 'none';
+      };
+
+      if (iframeLoadTimer) clearTimeout(iframeLoadTimer);
+      iframeLoadTimer = setTimeout(() => {
+        if (overlay && overlay.style.display !== 'none') {
+          if (loadSub) loadSub.textContent = 'School network is taking time to fetch assets. Still loading or switch to an instant game below.';
+        }
+      }, 5000);
     } else {
-      iframeBox.innerHTML = `
-        <iframe src="${game.src}" title="${game.title}" class="game-frame" allow="fullscreen; autoplay; gamepad; pointer-lock"></iframe>
-      `;
+      if (overlay) overlay.style.display = 'none';
     }
 
     // update fav btn
@@ -634,10 +837,22 @@
   }
 
   function closePlayer() {
+    if (iframeLoadTimer) clearTimeout(iframeLoadTimer);
     const modal = document.getElementById('player-modal');
     modal.style.display = 'none';
-    const iframeBox = document.getElementById('modal-iframe-container');
-    iframeBox.innerHTML = '';
+
+    const overlay = document.getElementById('game-loading-overlay');
+    if (overlay) overlay.style.display = 'none';
+
+    const innerBox = document.getElementById('modal-iframe-inner') || document.getElementById('modal-iframe-container');
+    if (innerBox) {
+      // Disconnect WebGL context & AudioContext to prevent Chromebook freezing & memory exhaustion
+      const iframes = innerBox.querySelectorAll('iframe');
+      iframes.forEach(f => {
+        try { f.src = 'about:blank'; } catch(e) {}
+      });
+      innerBox.innerHTML = '';
+    }
     activeGame = null;
   }
 
@@ -654,6 +869,32 @@
   }
 
   function bindEvents() {
+    // School WiFi controls
+    const schoolBtn = document.getElementById('school-mode-btn');
+    if (schoolBtn) {
+      schoolBtn.onclick = () => setSchoolMode(!isSchoolMode);
+    }
+    const cacheBtn = document.getElementById('cache-all-btn');
+    if (cacheBtn) {
+      cacheBtn.onclick = cacheAllGames;
+    }
+    const testPingBtn = document.getElementById('test-speed-btn');
+    if (testPingBtn) {
+      testPingBtn.onclick = testPing;
+    }
+    const cancelLoadBtn = document.getElementById('cancel-load-btn');
+    if (cancelLoadBtn) {
+      cancelLoadBtn.onclick = closePlayer;
+    }
+    const instantGameBtn = document.getElementById('instant-game-btn');
+    if (instantGameBtn) {
+      instantGameBtn.onclick = () => {
+        closePlayer();
+        const g2048 = games.find(g => g.id === '2048') || games[0];
+        if (g2048) launchGame(g2048);
+      };
+    }
+
     // Categories
     document.querySelectorAll('[data-category]').forEach(btn => {
       btn.onclick = () => {
@@ -666,13 +907,18 @@
       };
     });
 
-    // Search
+    // Search with debounce to prevent Chromebook CPU lock
+    let searchDebounceTimer = null;
     const searchInput = document.getElementById('search-input');
     searchInput.oninput = (e) => {
-      currentSearch = e.target.value;
-      renderHero();
-      renderRecents();
-      renderGames();
+      const query = e.target.value;
+      clearTimeout(searchDebounceTimer);
+      searchDebounceTimer = setTimeout(() => {
+        currentSearch = query;
+        renderHero();
+        renderRecents();
+        renderGames();
+      }, 100);
     };
 
     document.getElementById('clear-search').onclick = () => {
@@ -753,6 +999,11 @@
       } else {
         iframe = `<iframe src="${src}" title="${title}" class="game-frame" allowfullscreen sandbox="allow-scripts allow-same-origin allow-popups"></iframe>`;
       }
+      // Upgrade any insecure http: URLs to https: to prevent mixed-content warnings
+      if (src.startsWith('http://')) {
+        src = src.replace(/^http:\/\//i, 'https://');
+      }
+      iframe = iframe.replace(/src=["']http:\/\//gi, 'src="https://');
 
       const customGame = {
         id: 'custom-' + Date.now(),
@@ -786,30 +1037,31 @@
     document.getElementById('close-player-btn').onclick = closePlayer;
     document.getElementById('modal-cloak-blank-btn').onclick = () => {
       if (!activeGame) return;
-      const blankWin = window.open('about:blank', '_blank');
-      if (!blankWin) {
-        alert('Popup blocked! Please allow popups to open in unblocked about:blank mode.');
-        return;
-      }
-      blankWin.document.title = 'Google Docs';
-      const icon = blankWin.document.createElement('link');
-      icon.rel = 'icon';
-      icon.href = 'https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico';
-      blankWin.document.head.appendChild(icon);
+      try {
+        const blankWin = window.open('about:blank', '_blank');
+        if (!blankWin) return;
+        blankWin.document.title = 'Google Docs';
+        const icon = blankWin.document.createElement('link');
+        icon.rel = 'icon';
+        icon.href = 'https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico';
+        blankWin.document.head.appendChild(icon);
 
-      const frame = blankWin.document.createElement('iframe');
-      frame.style.position = 'fixed';
-      frame.style.inset = '0';
-      frame.style.width = '100vw';
-      frame.style.height = '100vh';
-      frame.style.border = 'none';
-      frame.src = window.location.origin + '/' + activeGame.src.replace(/^\.\//, '');
-      frame.allow = 'fullscreen; autoplay; gamepad; pointer-lock';
-      blankWin.document.body.style.margin = '0';
-      blankWin.document.body.style.padding = '0';
-      blankWin.document.body.style.overflow = 'hidden';
-      blankWin.document.body.style.background = '#000';
-      blankWin.document.body.appendChild(frame);
+        const frame = blankWin.document.createElement('iframe');
+        frame.style.position = 'fixed';
+        frame.style.inset = '0';
+        frame.style.width = '100vw';
+        frame.style.height = '100vh';
+        frame.style.border = 'none';
+        frame.src = new URL(activeGame.src, window.location.href).href;
+        frame.allow = 'fullscreen; autoplay; gamepad; pointer-lock';
+        blankWin.document.body.style.margin = '0';
+        blankWin.document.body.style.padding = '0';
+        blankWin.document.body.style.overflow = 'hidden';
+        blankWin.document.body.style.background = '#000';
+        blankWin.document.body.appendChild(frame);
+      } catch (err) {
+        console.warn('Cloak mode error:', err);
+      }
     };
     document.getElementById('modal-reload-btn').onclick = () => {
       if (activeGame) launchGame(activeGame);

@@ -3,6 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+    <script>
+      // Enforce HTTPS across all networks to eliminate browser "Not Secure" warning
+      if (location.protocol === 'http:' &&
+          location.hostname !== 'localhost' &&
+          location.hostname !== '127.0.0.1' &&
+          !location.hostname.endsWith('.local')) {
+        location.replace('https:' + location.href.substring(5));
+      }
+    </script>
     <title>NovaPlay Unblocked Games</title>
     <meta name="description" content="Fast, clean unblocked games portal featuring classic HTML5 arcade and puzzle games embedded seamlessly via JSON." />
     <meta property="og:title" content="NovaPlay Unblocked Games" />
@@ -11,18 +21,19 @@
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <link rel="icon" type="image/x-icon" href="./favicon.ico" />
-    <link rel="apple-touch-icon" href="./favicon.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="apple-touch-icon" href="./pwa-192x192.png" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <meta name="theme-color" content="#020617" />
+    <!-- School Firewall & Low-Latency Font Strategy -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+      <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    </noscript>
     <link rel="stylesheet" href="./style.css">
-    <!-- Fast Preloading for Heavy 3D/Action Games -->
-    <link rel="prefetch" href="./games/gladihoppers/Build/UnityLoader.js" as="script">
-    <link rel="prefetch" href="./games/gladihoppers/Build/Gladihoppers.json" as="fetch">
-    <link rel="prefetch" href="./games/getaway-shootout/Build/UnityLoader.js" as="script">
-    <link rel="prefetch" href="./games/getaway-shootout/GetawayShootout.json" as="fetch">
   </head>
-  <body>
+  <body class="school-mode">
     <!-- Top Bar Navigation (3-Zone Contract) -->
     <header class="top-header">
       <div class="header-container">
@@ -45,21 +56,47 @@
 
         <!-- Zone 3: Primary Actions -->
         <div class="header-actions">
+          <button id="school-mode-btn" class="btn-secondary" title="Toggle School WiFi Turbo Mode (Zero Lag, Low Data, Smooth Scrolling)">
+            <span>⚡</span>
+            <span id="school-mode-label">School WiFi: ON</span>
+          </button>
           <button id="surprise-btn" class="btn-secondary btn-hide-mobile" title="Play random game">
             <span>✨</span>
-            <span>Surprise Me</span>
+            <span>Surprise</span>
           </button>
           <button id="add-game-btn" class="btn-secondary btn-hide-mobile" title="Add a custom game iframe">
             <span>➕</span>
-            <span>Add Game</span>
+            <span>Add</span>
           </button>
           <button id="cloak-btn" class="btn-primary" title="Disguise as Google Drive [Press Esc or `]">
             <span>🛡️</span>
-            <span>Stealth Cloak</span>
+            <span>Cloak</span>
           </button>
         </div>
       </div>
     </header>
+
+    <!-- School WiFi Performance & Cache Status Bar -->
+    <div id="school-status-bar" class="school-status-bar">
+      <div class="school-status-container">
+        <div class="school-status-left">
+          <span id="status-dot" class="status-dot"></span>
+          <span id="network-status-text"><strong>School WiFi Optimizer:</strong> Turbo Active</span>
+          <span class="status-divider">·</span>
+          <span id="ping-text" class="ping-badge">⚡ Cache: Ready</span>
+          <span class="status-divider">·</span>
+          <span id="cache-status-text">14 Core Games Offline-Ready</span>
+        </div>
+        <div class="school-status-right">
+          <button id="cache-all-btn" class="school-bar-btn" title="Download & store all arcade games locally in your browser for 100% offline play">
+            💾 Save All Games Offline
+          </button>
+          <button id="test-speed-btn" class="school-bar-btn" title="Measure latency on school network">
+            📶 Test Ping
+          </button>
+        </div>
+      </div>
+    </div>
 
     <!-- Main Content -->
     <main class="main-content">
@@ -240,7 +277,21 @@
         </div>
 
         <!-- Main Iframe Display Container -->
-        <div id="modal-iframe-container" class="modal-iframe-box"></div>
+        <div id="modal-iframe-container" class="modal-iframe-box" style="position: relative;">
+          <div id="game-loading-overlay" class="game-loading-overlay" style="display: none;">
+            <div class="loading-spinner"></div>
+            <div id="game-loading-title" class="game-loading-title">Loading Game...</div>
+            <div id="game-loading-sub" class="game-loading-sub">Connecting over School WiFi...</div>
+            <div class="loading-bar-track">
+              <div id="game-loading-bar" class="loading-bar-fill"></div>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 14px;">
+              <button id="cancel-load-btn" class="btn-secondary" style="font-size: 12px; padding: 5px 12px;">✕ Cancel</button>
+              <button id="instant-game-btn" class="btn-primary" style="font-size: 12px; padding: 5px 12px;">⚡ Play Instant 2048</button>
+            </div>
+          </div>
+          <div id="modal-iframe-inner" style="width: 100%; height: 100%;"></div>
+        </div>
 
         <!-- Modal Bottom Info -->
         <div class="modal-body">
